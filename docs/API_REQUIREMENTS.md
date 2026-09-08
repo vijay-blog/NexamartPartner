@@ -85,6 +85,126 @@ Any other role (including `CUSTOMER`) must be rejected by backend and blocked by
 | `/api/v1/admin/delivery-partners/{id}` | GET/PATCH | Bearer token | ADMIN | Partner details/status/verification management |
 | `/api/v1/admin/reports/*` | GET | Bearer token | ADMIN | Reporting endpoints (sales/order ops) |
 
+## Phase 4 — Admin dashboard contract status
+
+### Confirmed in this repository
+
+- No backend source for dashboard APIs is available in this repository.
+- No confirmed JSON contract for dashboard KPIs or recent orders is available.
+
+### BACKEND REQUIRED — Admin dashboard endpoint
+
+| Item | Requirement |
+|---|---|
+| Endpoint purpose | Return admin operational overview for KPI cards and recent orders in a single response |
+| HTTP method | `GET` |
+| Path | **BACKEND REQUIRED** (Android keeps endpoint contract-gated and does not guess a path) |
+| Authorization | JWT bearer token |
+| Required role | `ADMIN` only |
+| Query parameters | Optional `recentOrdersLimit` integer (backend default if omitted) |
+
+### Response fields required by Android dashboard
+
+```json
+{
+  "totalOrders": 0,
+  "todayOrders": 0,
+  "pendingOrders": 0,
+  "outForDelivery": 0,
+  "deliveredToday": 0,
+  "todaySales": 0.0,
+  "currencyCode": "INR",
+  "recentOrders": [
+    {
+      "orderId": "NM10025",
+      "customerName": "Rahul",
+      "amount": 850.0,
+      "status": "OUT_FOR_DELIVERY",
+      "createdAt": "2026-09-07T13:00:00Z"
+    }
+  ]
+}
+```
+
+### Error response requirements
+
+- `401`: session invalid/expired; Android transitions to login through centralized auth handling.
+- `403`: non-admin role denied.
+- `5xx` and network failures: retryable dashboard error without forced logout.
+- Response body must not include stack traces, SQL internals, or secrets.
+
+## Phase 5 — Admin order management contract status
+
+### Confirmed in this repository
+
+- Backend source code is not present in this repository, so live order endpoint contracts cannot be verified here.
+- Android implementation is contract-aware and keeps order APIs disabled until contract keys/paths are confirmed.
+
+### BACKEND REQUIRED — Admin orders APIs
+
+| Capability | Requirement |
+|---|---|
+| Order list | `GET` admin orders endpoint with pagination, sorting, and server-side search/filter |
+| Order details | `GET` admin order details endpoint by order id |
+| Status update | Admin-authorized mutation endpoint with backend-side transition validation |
+| Order cancellation | Admin-authorized cancellation endpoint with backend-side rule validation |
+| Delivery assignment (foundation for later phase) | Assign/reassign endpoint contract confirmation required |
+
+### Required order list query contract
+
+- Page index parameter key
+- Page size parameter key
+- Sort parameter format and accepted values
+- Search parameter key and supported search fields (order id/customer name/phone support matrix)
+- Filter parameter keys and allowed enum values for:
+  - order status
+  - payment status
+  - date range (if supported)
+  - delivery filters (if supported)
+
+### Required order response fields for Android
+
+Order list summary:
+
+- `orderId`
+- `customerName`
+- `customerPhone` (if permitted)
+- `itemCount`
+- `totalAmount`
+- `currencyCode`
+- `status`
+- `paymentStatus`
+- `deliveryStatus` (if available)
+- `createdAt`
+
+Order details:
+
+- `orderId`, `createdAt`, current `status`
+- customer block (`name`, optional `phone`, optional `address`)
+- items block (`productName`, `quantity`, `unitPrice`, `lineTotal`)
+- payment block (`method`, `status`, optional `transactionReference`)
+- totals block (`subtotal`, `deliveryFee`, `discount`, `tax`, `grandTotal`, `currencyCode`)
+- delivery block (`status`, `partnerName`, `assignedAt`) when available
+- timeline/status history when available
+- `allowedTransitions` and `canCancel` flags where mutation UI is enabled
+
+### Status transition and conflict requirements
+
+- Backend remains final authority for valid status transitions.
+- Backend should return transition hints (`allowedTransitions`) when possible.
+- Concurrent mutation conflicts should return `409` with safe error payload.
+- Android maps conflicts to a refresh-first message and does not overwrite stale state.
+
+### Error response requirements for order management
+
+- `401`: token/session invalid -> centralized auth recovery.
+- `403`: role denied -> explicit permission message.
+- `404`: order not found.
+- `409`: order updated elsewhere; refresh required.
+- `422`: validation/transition rejection.
+- `5xx`: retryable server errors.
+- No stack traces, SQL internals, or secret/internal fields in error payloads.
+
 ## Delivery partner APIs
 
 | API | Method | Authorization | Role | Purpose |

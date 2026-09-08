@@ -12,7 +12,7 @@ class NavigationGuardTest {
     fun `unauthenticated request to admin is redirected to login`() {
         val destination = NavigationGuard.resolveAuthorizedDestination(
             authState = AuthState.Unauthenticated,
-            requestedDestinationId = R.id.adminOrdersPlaceholderFragment
+            requestedDestinationId = R.id.adminOrdersFragment
         )
         assertEquals(R.id.loginFragment, destination)
     }

@@ -15,8 +15,9 @@ enum class AppDestination(val navId: Int, val scope: DestinationScope) {
     ACCESS_DENIED(R.id.unsupportedRoleFragment, DestinationScope.PUBLIC),
 
     ADMIN_GRAPH(R.id.adminGraph, DestinationScope.ADMIN),
-    ADMIN_DASHBOARD(R.id.adminDashboardPlaceholderFragment, DestinationScope.ADMIN),
-    ADMIN_ORDERS(R.id.adminOrdersPlaceholderFragment, DestinationScope.ADMIN),
+    ADMIN_DASHBOARD(R.id.adminDashboardFragment, DestinationScope.ADMIN),
+    ADMIN_ORDERS(R.id.adminOrdersFragment, DestinationScope.ADMIN),
+    ADMIN_ORDER_DETAILS(R.id.adminOrderDetailsFragment, DestinationScope.ADMIN),
     ADMIN_PRODUCTS(R.id.adminProductsPlaceholderFragment, DestinationScope.ADMIN),
     ADMIN_CATEGORIES(R.id.adminCategoriesPlaceholderFragment, DestinationScope.ADMIN),
     ADMIN_CUSTOMERS(R.id.adminCustomersPlaceholderFragment, DestinationScope.ADMIN),

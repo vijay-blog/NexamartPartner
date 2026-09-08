@@ -8,7 +8,9 @@
 | Phase 1 — Application foundation | Complete | Core app bootstrap, Material 3 baseline, shared UI scaffolding and env flavors in place |
 | Phase 2 — Authentication | Complete (Contract-aware) | Auth architecture implemented with backend-contract placeholders for unconfirmed request schemas |
 | Phase 3 — Role-based routing and protected navigation | Complete | Root auth gate, nested graphs, role isolation policy, navigation guard, expanded placeholders/tests |
-| Phase 4+ | Pending | Progressive feature implementation |
+| Phase 4 — Admin dashboard foundation | Complete (Contract-aware) | Real admin dashboard foundation with clean layers, pull-to-refresh, retries, role-safe navigation, and backend contract gating |
+| Phase 5 — Admin order management | Complete (Contract-aware) | End-to-end Android order module architecture with list/details/search/filter/pagination/actions and contract-gated backend integration |
+| Phase 6+ | Pending | Progressive feature implementation |
 
 ## PHASE 0 COMPLETE
 
@@ -106,3 +108,120 @@ Known limitations:
 - Android-side authorization is defense in depth only; backend Spring Security remains authoritative.
 - Deep-link routes are runtime-guarded, but dedicated deep-link contracts are not yet implemented (pending feature phases).
 - Token refresh request/response specifics remain contract-dependent and intentionally not guessed.
+
+## PHASE 4 COMPLETE — ADMIN DASHBOARD FOUNDATION
+
+Status:
+
+- Complete (contract-aware foundation)
+
+Implemented:
+
+- Replaced admin placeholder with `AdminDashboardScreen` and production-style admin operations layout.
+- Added clean dashboard feature stack:
+  - `AdminDashboardViewModel`
+  - `GetAdminDashboardUseCase`
+  - `AdminDashboardRepository` + implementation
+  - `AdminDashboardRemoteDataSource` + implementation
+  - `AdminDashboardApi`
+  - Contract gate via `AdminDashboardContract` / `PendingBackendAdminDashboardContract`
+- Added typed dashboard API/data models and domain models for KPIs/recent orders.
+- Added robust dashboard UI states: `Loading`, `Success`, `Empty`, `Error`, `Unavailable`.
+- Added pull-to-refresh, retry, and duplicate-request protection.
+- Added profile icon entry and notification placeholder icon (disabled, no fake notifications).
+- Added quick-action navigation to Orders, Products, Categories, Delivery Partners, and Customers placeholders.
+- Added reusable recent order card layout and adapter for recent orders list.
+- Added centralized number/currency formatting (`ValueFormatter`) with Indian locale formatting.
+- Retained centralized logout flow through `AuthCoordinatorViewModel`.
+
+Backend APIs:
+
+- Dashboard endpoint remains **contract-gated**; no guessed path is called until backend confirms contract/path.
+- App shows explicit unavailable states instead of fake KPI/order data.
+- Existing backend authorization assumptions remain unchanged: backend must enforce JWT and ADMIN role.
+
+Tests:
+
+- Added `AdminDashboardViewModelTest` covering initial loading, success, empty, error, retry, refresh, and auth error handling.
+- Added `AdminDashboardRepositoryImplTest` covering success mapping, API failure, network failure, and mapping failure.
+- Extended instrumentation tests with admin dashboard rendering/state/navigation checks and delivery-partner admin-route block check.
+
+Known limitations:
+
+- Live dashboard KPI/recent-orders loading is pending backend endpoint path and finalized response contract.
+
+## PHASE 5 COMPLETE — ADMIN ORDER MANAGEMENT
+
+Status:
+
+- Complete (contract-aware implementation in Android app)
+
+Implemented:
+
+- Added `AdminOrdersScreen` with:
+  - backend-ready search input with debounce
+  - status chips
+  - filter/sort controls
+  - pull-to-refresh
+  - pagination/load-more
+  - loading/empty/error/unavailable states
+- Added reusable `OrderSummaryCard` list item (`item_admin_order_summary.xml`).
+- Added `AdminOrderDetailsScreen` with:
+  - order information
+  - customer information
+  - items section
+  - payment section
+  - totals section
+  - delivery section
+  - timeline section
+  - update status action
+  - cancel order action
+- Added centralized typed order domain models:
+  - `OrderStatus`
+  - `PaymentStatus`
+  - `PaymentMethod`
+  - paged/list/details/timeline/totals models
+- Added clean architecture flow for orders:
+  - ViewModels (`AdminOrdersViewModel`, `AdminOrderDetailsViewModel`)
+  - Use cases (`GetAdminOrdersUseCase`, `GetAdminOrderDetailsUseCase`, `UpdateAdminOrderStatusUseCase`, `CancelAdminOrderUseCase`)
+  - Repository (`AdminOrdersRepository`, `AdminOrdersRepositoryImpl`)
+  - Remote data source (`AdminOrdersRemoteDataSource`, `AdminOrdersRemoteDataSourceImpl`)
+  - Retrofit API (`AdminOrdersApi`)
+  - Contract gate (`AdminOrdersContract`, `PendingBackendAdminOrdersContract`)
+- Added admin navigation routes:
+  - `adminOrdersFragment`
+  - `adminOrderDetailsFragment`
+- Updated role destination mapping to keep admin order flows ADMIN-only.
+- Preserved centralized auth/session-expiration/logout handling.
+
+Backend:
+
+- Backend source is not available in this repository, so order API contracts cannot be verified or implemented here.
+- Android order APIs are intentionally contract-gated and do not call guessed endpoints or guessed payload contracts.
+- Delivery assignment is prepared as UI/data foundation and documented as backend-required.
+
+Tests:
+
+- Added unit tests:
+  - `AdminOrdersRepositoryImplTest`
+  - `AdminOrdersViewModelTest`
+  - `AdminOrderDetailsViewModelTest`
+  - `OrderStatusModelsTest`
+- Updated navigation guard test for new admin orders destination.
+- Extended instrumentation tests for:
+  - dashboard -> orders navigation
+  - orders -> order details navigation
+  - back navigation from details
+  - delivery role denial for admin orders route
+
+Build and quality:
+
+- `:app:assembleDevDebug` successful
+- `:app:testDevDebugUnitTest` successful
+- `:app:lint` successful
+- `:app:assembleDevDebugAndroidTest` successful
+
+Known limitations:
+
+- Live order list/details/status-update/cancel execution remains pending confirmed backend endpoint paths/query keys/body fields.
+- Date-range filtering and delivery assignment execution remain backend-contract dependent.

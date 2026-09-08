@@ -2,12 +2,12 @@
 
 ## Repository and platform baseline
 
-This repository currently contains a **new native Android application shell** (not Flutter), with:
+This repository contains a native Android Admin + Delivery client, with:
 
 - Gradle Kotlin DSL build
 - Single `:app` module
 - Android package: `com.daily.nexamartpartner`
-- No implemented feature code yet (only template tests/resources)
+- Phased implementation across foundation, authentication, protected navigation, and Admin Dashboard foundation
 
 ## Current technology identified
 
@@ -50,7 +50,7 @@ Android-side defense in depth implemented:
 - Runtime navigation guard (`NavigationGuard`) against unauthorized/unknown destinations
 - Session clear + root reset on logout and invalid session
 
-## Root navigation architecture (Phase 3)
+## Root navigation architecture (Phase 5)
 
 Navigation technology: **XML Navigation Component**.
 
@@ -61,7 +61,9 @@ Root graph structure:
   - `loginFragment`
   - `unsupportedRoleFragment` (access restricted)
 - `adminGraph`
-  - `adminDashboardPlaceholderFragment`
+  - `adminDashboardFragment`
+  - `adminOrdersFragment`
+  - `adminOrderDetailsFragment`
   - admin feature placeholder destinations for future phases
 - `deliveryGraph`
   - `deliveryDashboardPlaceholderFragment`
@@ -107,6 +109,66 @@ This also protects planned deep-link entry points at runtime (if a deep link res
 - If refresh fails, session is cleared and routing returns to login.
 
 Exact refresh contract remains backend-dependent and is intentionally isolated behind auth interfaces.
+
+## Admin dashboard architecture (Phase 4 foundation)
+
+Implemented stack:
+
+- `AdminDashboardScreen` (UI)
+- `AdminDashboardViewModel`
+- `GetAdminDashboardUseCase`
+- `AdminDashboardRepository`
+- `AdminDashboardRemoteDataSource`
+- `AdminDashboardApi`
+
+Data/state behavior:
+
+- Dashboard state is modeled as `Loading`, `Success`, `Empty`, `Error`, and `Unavailable`.
+- Pull-to-refresh and retry are ViewModel-driven and de-duplicated to prevent concurrent dashboard requests.
+- Unauthorized dashboard failures emit a session-expired event and reuse centralized auth logout/routing behavior.
+- Number and currency formatting are centralized in `ValueFormatter` (Indian locale formatting).
+
+Contract strategy:
+
+- Dashboard endpoint path is contract-gated by `AdminDashboardContract`.
+- Current implementation uses `PendingBackendAdminDashboardContract`, so no guessed endpoint is called.
+- UI shows a production-safe unavailable state when backend contract is missing.
+
+## Admin order management architecture (Phase 5)
+
+Implemented stack:
+
+- `AdminOrdersScreen` (orders list/search/filter/pagination/refresh)
+- `AdminOrderDetailsScreen` (order detail/timeline/payment/customer/delivery/status actions)
+- `AdminOrdersViewModel`
+- `AdminOrderDetailsViewModel`
+- `GetAdminOrdersUseCase`
+- `GetAdminOrderDetailsUseCase`
+- `UpdateAdminOrderStatusUseCase`
+- `CancelAdminOrderUseCase`
+- `AdminOrdersRepository`
+- `AdminOrdersRemoteDataSource`
+- `AdminOrdersApi`
+
+Data flow:
+
+- UI -> ViewModel -> Use Case -> Repository -> Remote Data Source -> Retrofit API -> backend.
+- Search and filters are sent through query contracts (no large local dataset filtering).
+- Pagination is backend-driven and guarded against duplicate page requests.
+- Order details load on demand only when an order is selected.
+
+State and error handling:
+
+- Orders state: `Loading`, `Success`, `Empty`, `Error`, `Unavailable`.
+- Details state: `Loading`, `Success`, `Error`, `Unavailable`.
+- Pull-to-refresh and retry are lifecycle-safe and ViewModel-driven.
+- Unauthorized failures trigger centralized session-expiration handling.
+- Contract-missing failures render explicit unavailable UI instead of fake order data.
+
+Contract strategy:
+
+- `AdminOrdersContract` defines order-list/details/status-update/cancel request contracts.
+- Current wiring uses `PendingBackendAdminOrdersContract`; APIs stay blocked until backend contracts are confirmed.
 
 ## Delivery and order lifecycle target (domain constants for later phases)
 

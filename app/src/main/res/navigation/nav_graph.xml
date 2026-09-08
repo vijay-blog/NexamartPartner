@@ -25,23 +25,23 @@
 
     <navigation
         android:id="@+id/adminGraph"
-        app:startDestination="@id/adminDashboardPlaceholderFragment">
+        app:startDestination="@id/adminDashboardFragment">
         <fragment
-            android:id="@+id/adminDashboardPlaceholderFragment"
-            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.AdminDashboardPlaceholderFragment"
+            android:id="@+id/adminDashboardFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.AdminDashboardScreen"
             android:label="Admin Dashboard" />
 
         <fragment
-            android:id="@+id/adminOrdersPlaceholderFragment"
-            android:name="com.daily.nexamartpartner.features.shared.presentation.ui.FeaturePlaceholderFragment"
-            android:label="Admin Orders">
+            android:id="@+id/adminOrdersFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.AdminOrdersScreen"
+            android:label="Admin Orders" />
+
+        <fragment
+            android:id="@+id/adminOrderDetailsFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.AdminOrderDetailsScreen"
+            android:label="Order Details">
             <argument
-                android:name="featureTitle"
-                android:defaultValue="Orders"
-                app:argType="string" />
-            <argument
-                android:name="featureSubtitle"
-                android:defaultValue="Admin orders module placeholder."
+                android:name="orderId"
                 app:argType="string" />
         </fragment>
 
@@ -55,7 +55,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin products module placeholder."
+                android:defaultValue="Product management will be available in the next module."
                 app:argType="string" />
         </fragment>
 
@@ -69,7 +69,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin categories module placeholder."
+                android:defaultValue="Category management will be available in the next module."
                 app:argType="string" />
         </fragment>
 
@@ -83,7 +83,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin customers module placeholder."
+                android:defaultValue="Customer management will be available in the next module."
                 app:argType="string" />
         </fragment>
 
@@ -97,7 +97,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin delivery partner module placeholder."
+                android:defaultValue="Delivery partner management will be available in the next module."
                 app:argType="string" />
         </fragment>
 
@@ -125,7 +125,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin notifications module placeholder."
+                android:defaultValue="Notifications center will be available in a future module."
                 app:argType="string" />
         </fragment>
 
@@ -139,7 +139,7 @@
                 app:argType="string" />
             <argument
                 android:name="featureSubtitle"
-                android:defaultValue="Admin profile module placeholder."
+                android:defaultValue="Profile management will be available in the next module."
                 app:argType="string" />
         </fragment>
 
