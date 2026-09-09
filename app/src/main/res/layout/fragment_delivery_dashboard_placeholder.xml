@@ -65,14 +65,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/assignedOrdersButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/delivery_assigned_orders" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/orderDetailsButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -80,7 +80,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/pickupButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -88,7 +88,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deliveryButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -96,7 +96,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/historyButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -104,7 +104,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/earningsButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -112,7 +112,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/profileButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -120,7 +120,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/availabilityButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -128,7 +128,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/notificationsButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/NexaMartOutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

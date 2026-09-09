@@ -1,11 +1,13 @@
 package com.daily.nexamartpartner
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.fragment.NavHostFragment
@@ -26,6 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Prevent screenshots/screen capture of customer, order, address and earnings data.
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -39,7 +43,20 @@ class MainActivity : AppCompatActivity() {
         )[AuthCoordinatorViewModel::class.java]
 
         observeAuthState()
+        observeConnectivity()
         authCoordinatorViewModel.initialize()
+    }
+
+    private fun observeConnectivity() {
+        val monitor = applicationContext.appContainer.networkConnectivityMonitor
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                monitor.state.collect { state ->
+                    binding.offlineBanner.isVisible =
+                        state == com.daily.nexamartpartner.core.network.NetworkConnectivityMonitor.State.OFFLINE
+                }
+            }
+        }
     }
 
     private fun observeAuthState() {

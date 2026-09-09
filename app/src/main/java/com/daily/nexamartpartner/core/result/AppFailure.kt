@@ -8,6 +8,9 @@ enum class FailureType {
     CONTRACT_MISSING,
     UNSUPPORTED_ROLE,
     SERVER,
+    NOT_FOUND,
+    CONFLICT,
+    TRANSIENT,
     UNKNOWN
 }
 

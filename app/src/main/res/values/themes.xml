@@ -6,6 +6,8 @@
         <item name="colorOnSecondary">@color/nxm_on_secondary</item>
         <item name="colorSurface">@color/nxm_surface</item>
         <item name="colorOnSurface">@color/nxm_on_surface</item>
+        <item name="colorSurfaceVariant">@color/nxm_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/nxm_on_surface_variant</item>
         <item name="colorError">@color/nxm_error</item>
         <item name="colorOnError">@color/nxm_on_error</item>
         <item name="android:statusBarColor">@color/nxm_primary</item>

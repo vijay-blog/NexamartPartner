@@ -399,3 +399,56 @@ The following could not be confirmed from repository code:
 - Payment status/method enums and source-of-truth fields
 
 Backend/API contract confirmation is required before implementing full production integrations in Phases 2+.
+
+
+## Phase 15 — Delivery History
+- Required backend contract: delivery-partner history list path.
+- Query contract: page, pageSize, optional search, status, fromDate, toDate.
+- Response can reuse the delivery order page summary shape.
+- History must be scoped server-side to the authenticated delivery partner.
+- Suggested business statuses are UI filters only; backend remains authoritative and may map different status values.
+- Android currently returns an explicit unavailable state until the exact Spring Boot contract is confirmed.
+
+## Delivery Earnings API (Phase 16)
+The Android module now expects the backend to explicitly define:
+- earnings summary endpoint and query semantics for optional from/to dates;
+- paginated earnings history endpoint and query semantics for page, pageSize, fromDate, toDate;
+- summary fields: currencyCode, today, thisWeek, thisMonth, completedDeliveries, pendingPayout, totalEarned;
+- history fields: id, orderId, earnedAt, amount, currencyCode, status, description;
+- ADMIN must not be able to use delivery-partner endpoints unless separately authorized; DELIVERY_PARTNER access is required for these screens.
+No endpoint path or payload mapping is invented in the pending contract.
+
+## Phase 17 — Delivery Notifications
+
+The Android delivery notification center is contract-gated until the Java Spring Boot backend contract is confirmed. Required backend capabilities:
+- GET notification page for the authenticated DELIVERY_PARTNER with page/pageSize and optional unreadOnly query.
+- POST/PUT operation to mark one notification read.
+- POST/PUT operation to mark all notifications read.
+- Response fields: id, title, message, createdAt, read, type, optional orderId/actionUrl, pagination metadata, and optional unreadCount.
+- Server-side authorization must restrict notification access to the authenticated partner.
+- If notification references an order, the backend must ensure the referenced order is accessible to that partner.
+- Do not expose secrets, tokens, internal metadata, or unrelated customer PII in notification payloads.
+
+## Phase 18 — Delivery Partner Profile
+- GET delivery-partner profile endpoint is pending confirmation from the Java Spring Boot backend.
+- PUT/PATCH profile update endpoint and exact editable-field/body contract are pending confirmation.
+- The Android feature is contract-gated and does not guess endpoint paths, request fields, or mutability rules.
+- Backend should return verification/account status and an explicit editable-field list if field-level editing is supported.
+- Profile image upload is intentionally not implemented until the real media/upload contract is confirmed.
+
+## Phase 19 — Delivery Availability
+
+Android is contract-ready for a delivery-partner availability read/update API. The backend must confirm the exact GET/read path, update path, request field/body, response fields, authorization, and business rules (including whether a partner with active orders may go offline). No endpoint or payload is assumed by the Android client. The UI uses backend `available`, `status`, `canChange`, `reason`, and `updatedAt` when supplied.
+
+
+## Phase 20 — Admin Settings API Requirements
+If server-side settings are required, the Spring Boot backend should expose an authenticated ADMIN-only configuration contract. Android must consume only confirmed fields and permissions; it must not invent endpoints or mutate business/security/payment configuration locally.
+Required contract areas when supported: settings summary, editable-field metadata, update endpoint, validation/error payloads, audit information, and optimistic-concurrency/version handling where applicable.
+
+## Phase 22 — Offline / Network Resilience
+- Android now observes device internet capability through `NetworkConnectivityMonitor`.
+- A global offline banner is shown while the device has no usable internet capability.
+- `OfflineAwareInterceptor` fails requests fast while known offline; it does not queue or retry mutations.
+- Phase 21 read retry behavior remains responsible for safe GET/HEAD retries when connectivity exists.
+- The app does not fabricate cached server state. Existing feature unavailable/error states remain authoritative until a real backend response is available.
+- No background synchronization, offline mutation queue, or conflict-merging strategy is enabled because the Spring Boot backend contract does not define one yet.

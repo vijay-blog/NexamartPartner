@@ -21,7 +21,7 @@ class NavigationGuardTest {
     fun `authenticated admin request to delivery is redirected to admin graph`() {
         val destination = NavigationGuard.resolveAuthorizedDestination(
             authState = AuthState.AuthenticatedAdmin(testSession(UserRole.ADMIN)),
-            requestedDestinationId = R.id.deliveryHistoryPlaceholderFragment
+            requestedDestinationId = R.id.deliveryHistoryFragment
         )
         assertEquals(R.id.adminGraph, destination)
     }

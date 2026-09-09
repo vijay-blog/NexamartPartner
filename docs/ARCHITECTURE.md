@@ -285,3 +285,6 @@ Delivery lifecycle:
 `READY -> ASSIGNED -> ACCEPTED -> PICKED_UP -> OUT_FOR_DELIVERY -> DELIVERED`
 
 Detailed implementation progress is tracked in `docs/IMPLEMENTATION_STATUS.md`.
+
+### UI/UX design system
+Phase 24 introduces reusable Material 3 presentation styles (`NexaMartCard`, `NexaMartOutlinedCard`, `NexaMartPrimaryButton`, `NexaMartOutlinedButton`) and a light/dark semantic color system. These are presentation-only and do not change domain, repository, or API contracts.

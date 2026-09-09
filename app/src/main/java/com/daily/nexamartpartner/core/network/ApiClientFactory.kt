@@ -8,12 +8,17 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 object ApiClientFactory {
-    fun create(authHeaderInterceptor: AuthHeaderInterceptor): Retrofit {
+    fun create(
+        authHeaderInterceptor: AuthHeaderInterceptor,
+        connectivityMonitor: NetworkConnectivityMonitor
+    ): Retrofit {
         val httpClient = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(authHeaderInterceptor)
+            .addInterceptor(OfflineAwareInterceptor(connectivityMonitor))
+            .addInterceptor(SafeReadRetryInterceptor(maxRetries = 1))
 
         if (AppConfig.enableNetworkLogging) {
             val interceptor = HttpLoggingInterceptor()

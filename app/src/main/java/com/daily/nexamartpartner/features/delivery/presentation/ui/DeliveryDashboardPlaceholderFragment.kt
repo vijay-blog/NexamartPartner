@@ -33,11 +33,11 @@ class DeliveryDashboardPlaceholderFragment :
             navController = findNavController(),
             authStateStore = requireContext().appContainer.authStateStore
         )
-        binding.assignedOrdersButton.setOnClickListener { navigator.navigate(R.id.deliveryAssignedOrdersPlaceholderFragment) }
-        binding.orderDetailsButton.setOnClickListener { navigator.navigate(R.id.deliveryOrderDetailsPlaceholderFragment) }
+        binding.assignedOrdersButton.setOnClickListener { navigator.navigate(R.id.deliveryAssignedOrdersFragment) }
+        binding.orderDetailsButton.setOnClickListener { navigator.navigate(R.id.deliveryAssignedOrdersFragment) }
         binding.pickupButton.setOnClickListener { navigator.navigate(R.id.deliveryPickupPlaceholderFragment) }
         binding.deliveryButton.setOnClickListener { navigator.navigate(R.id.deliveryRunPlaceholderFragment) }
-        binding.historyButton.setOnClickListener { navigator.navigate(R.id.deliveryHistoryPlaceholderFragment) }
+        binding.historyButton.setOnClickListener { navigator.navigate(R.id.deliveryHistoryFragment) }
         binding.earningsButton.setOnClickListener { navigator.navigate(R.id.deliveryEarningsPlaceholderFragment) }
         binding.profileButton.setOnClickListener { navigator.navigate(R.id.deliveryProfilePlaceholderFragment) }
         binding.availabilityButton.setOnClickListener { navigator.navigate(R.id.deliveryAvailabilityPlaceholderFragment) }

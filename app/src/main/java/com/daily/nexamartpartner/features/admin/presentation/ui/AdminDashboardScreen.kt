@@ -67,6 +67,9 @@ class AdminDashboardScreen : Fragment(R.layout.fragment_admin_dashboard) {
     }
 
     private fun setupHeaderActions(navigator: ProtectedNavigator) {
+        binding.settingsButton.setOnClickListener {
+            navigator.navigate(R.id.adminSettingsFragment)
+        }
         binding.profileButton.setOnClickListener {
             navigator.navigate(R.id.adminProfilePlaceholderFragment)
         }
@@ -80,13 +83,13 @@ class AdminDashboardScreen : Fragment(R.layout.fragment_admin_dashboard) {
             navigator.navigate(R.id.adminProductsFragment)
         }
         binding.categoriesActionButton.setOnClickListener {
-            navigator.navigate(R.id.adminCategoriesPlaceholderFragment)
+            navigator.navigate(R.id.adminCategoriesFragment)
         }
         binding.deliveryPartnersActionButton.setOnClickListener {
             navigator.navigate(R.id.adminDeliveryPartnersFragment)
         }
         binding.customersActionButton.setOnClickListener {
-            navigator.navigate(R.id.adminCustomersPlaceholderFragment)
+            navigator.navigate(R.id.adminCustomersFragment)
         }
         binding.viewAllOrdersButton.setOnClickListener {
             navigator.navigate(R.id.adminOrdersFragment)
