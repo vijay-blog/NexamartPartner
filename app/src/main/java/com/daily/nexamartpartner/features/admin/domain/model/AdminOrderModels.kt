@@ -70,7 +70,8 @@ data class OrderTotals(
 data class DeliveryInfo(
     val status: String?,
     val partnerName: String?,
-    val assignedAt: String?
+    val assignedAt: String?,
+    val partnerId: String? = null
 )
 
 data class OrderTimelineEntry(

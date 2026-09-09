@@ -10,7 +10,9 @@
 | Phase 3 — Role-based routing and protected navigation | Complete | Root auth gate, nested graphs, role isolation policy, navigation guard, expanded placeholders/tests |
 | Phase 4 — Admin dashboard foundation | Complete (Contract-aware) | Real admin dashboard foundation with clean layers, pull-to-refresh, retries, role-safe navigation, and backend contract gating |
 | Phase 5 — Admin order management | Complete (Contract-aware) | End-to-end Android order module architecture with list/details/search/filter/pagination/actions and contract-gated backend integration |
-| Phase 6+ | Pending | Progressive feature implementation |
+| Phase 6 — Delivery partner management | Complete (Contract-aware) | Admin partner list/details/search/filter/pagination/actions and order integration; backend contract remains external |
+| Phase 7 — Admin product management | Complete (Contract-aware) | Product list/details/create/edit/actions with category lookup, backend-driven statuses/actions, and pending backend contract |
+| Phase 8+ | Pending | Progressive feature implementation |
 
 ## PHASE 0 COMPLETE
 
@@ -225,3 +227,110 @@ Known limitations:
 
 - Live order list/details/status-update/cancel execution remains pending confirmed backend endpoint paths/query keys/body fields.
 - Date-range filtering and delivery assignment execution remain backend-contract dependent.
+
+## PHASE 6 COMPLETE — DELIVERY PARTNER MANAGEMENT
+
+Status:
+
+- Complete (contract-aware Android implementation)
+
+Implemented:
+
+- Added ADMIN-only delivery partner list and details destinations.
+- Added backend-ready search debounce, account/verification/availability filters, pagination, refresh, loading, empty, error, and unavailable states.
+- Added reusable partner cards with initials fallback and text-based account, verification, availability, and workload indicators.
+- Added details sections for profile, account, availability, vehicle, delivery statistics, current orders, and recent delivery history.
+- Added backend-authoritative assignment eligibility and allowed-action presentation.
+- Added confirmation and duplicate-request protection for verify, reject, activate, deactivate, suspend, and reactivate actions.
+- Added `409 Conflict` refresh behavior and centralized auth-expiration handling.
+- Connected Dashboard -> Delivery Partners -> Partner Details.
+- Connected Partner Details -> Current Order -> Admin Order Details.
+- Connected Admin Order Details -> Partner Details when the backend supplies `partnerId`.
+
+Android architecture:
+
+- Added typed network/domain models and centralized backend-enum mapping.
+- Added `DeliveryPartnerContract`, Retrofit API, remote source, repository, use cases, ViewModels, and UI state models.
+- Added `PendingBackendDeliveryPartnerContract` to prevent guessed production requests.
+- Availability remains display-only; eligibility and valid transitions are not calculated locally.
+
+Java Spring Boot:
+
+- No backend source, Maven project, entities, migrations, controllers, or security configuration exist in this repository.
+- No backend code or database schema was changed.
+
+Delivery Partner APIs:
+
+- Required list, details, mutation, search/filter/pagination, statistics, current-order, and history contracts are documented in `docs/API_REQUIREMENTS.md`.
+- Live integration remains disabled until the external backend confirms endpoint paths, query/body keys, response schemas, and enum values.
+
+Tests:
+
+- Added repository tests for success, empty data, query propagation, network/auth/not-found/conflict/server failures, and malformed responses.
+- Added status mapping tests.
+- Added list ViewModel tests for initial load, success, empty/error states, search, filters, refresh, and pagination.
+- Added details ViewModel tests for loading and all supported Admin actions, duplicate protection, and conflict refresh.
+- Expanded authorization/navigation tests for ADMIN access and DELIVERY_PARTNER denial.
+- Added instrumentation coverage for partner list/details rendering and protected-route behavior.
+
+Known limitations:
+
+- Live partner data and mutations are unavailable until the backend contract is confirmed.
+- Profile image URLs are modeled, but the UI currently uses an initials fallback because backend image support and an approved image-loading dependency are not confirmed.
+- No earnings or Admin availability override is exposed.
+
+## PHASE 7 COMPLETE — ADMIN PRODUCT MANAGEMENT
+
+Status:
+
+- Complete (contract-aware Android implementation)
+
+Implemented:
+
+- Replaced the `adminProductsPlaceholderFragment` placeholder with ADMIN-only `ProductListScreen`, `ProductDetailsScreen`, and `ProductFormScreen` (create + edit) destinations.
+- Added backend-ready debounced search, status filter chips, a category filter (sourced from the category-lookup endpoint), sort, pagination, refresh preserving current criteria, and duplicate-request guards, mirroring the Phase 5/6 list pattern.
+- Added a reusable `ProductCard` (`item_product_summary.xml`) showing name, category, stock/unit, exact price/discounted price, and status — with a static, accessible image placeholder instead of loading `imageUrl`.
+- Added product details with backend-supplied optional fields only (description, category, price, discounted price, discount percent, stock, SKU, unit, timestamps) and backend-authoritative `allowedActions` (`ACTIVATE`/`DEACTIVATE`/`DELETE`/`EDIT`) — never inferred locally.
+- Added confirmation and duplicate-submission protection for activate/deactivate/delete, a `409 Conflict` details refresh, `EDIT` navigation to the form, and centralized session-expiration handling.
+- Added a single product form (create/edit) that loads existing details for edit mode and always loads category options from the repository for the category selector. Category CRUD itself is explicitly **not** implemented (reserved for a future Phase 8 categories module).
+- Added local baseline validation (name required, category required, non-negative decimal price, discount 0-100 when provided, non-negative integer stock when provided) plus dirty-state tracking, duplicate-save protection, conflict-safe draft preservation, and an unsaved-changes confirmation on back navigation (toolbar button and system back gesture).
+- Connected Admin Dashboard's Products quick action to the real product list.
+
+Android architecture:
+
+- Added typed domain models (`ProductStatus`, `ProductAvailability`, `ProductAdminAction`, `ProductSummary`, `ProductDetails`, `CategoryOption`, `ProductsQuery`/`ProductFilters`/`ProductSort`, `ProductDraft`) with centralized backend-enum mapping and explicit `UNKNOWN` fallbacks.
+- Added `ProductManagementContract`, Retrofit API, remote data source, repository, use cases, ViewModels, and UI state models, following the exact Phase 5/6 layering (`UI -> ViewModel -> UseCase -> Repository -> RemoteDataSource -> Retrofit API`).
+- Added `PendingBackendProductManagementContract` so no guessed endpoint path, query key, or request/action body is ever sent; the remote data source returns `CONTRACT_MISSING` before any network call.
+- Monetary values are modeled as `BigDecimal`/exact decimal strings end-to-end; the app never computes discounted or final prices client-side.
+
+Java Spring Boot:
+
+- No backend source, Maven project, entities, migrations, controllers, or security configuration exist in this repository.
+- No backend code or database schema was changed.
+
+Product APIs:
+
+- Required list, details, category-lookup, create, update, and action contracts are documented in `docs/API_REQUIREMENTS.md`.
+- Live integration remains disabled until the external backend confirms endpoint paths, query/body keys, response schemas, and enum values.
+- Product data returned to Admin must remain compatible with existing customer-facing and historical-order flows (e.g., catalog edits must not silently change product name/price snapshots already recorded on past orders).
+
+Tests:
+
+- Added `ProductStatusModelsTest` for status/availability enum mapping.
+- Added `ProductManagementRepositoryImplTest` covering success mapping, empty data, network/contract-missing/unauthorized/not-found/conflict failures, category-option mapping, and allowed-action mapping.
+- Added `ProductViewModelTest` covering: list initial/success/empty/error/unavailable states, search debounce, in-flight criteria replacement, filter/sort reload, refresh, pagination and pagination failure preservation; details load and every backend-allowed action, duplicate-action guard, conflict refresh, unauthorized handling; form field validation (required name/category/price, discount and stock range checks), successful create save, duplicate-save guard, edit-mode prefill with dirty-flag reset, and conflict-safe draft preservation.
+- Expanded `AuthorizationPolicyTest`/`NavigationGuardTest` for the new product details/form destinations and DELIVERY_PARTNER denial.
+- Added `ProductManagementUiTest` instrumentation coverage for dashboard -> product list navigation, list -> details -> back, add-product -> create-form validation, and delivery-role route denial, using repository-override fixtures only (no fake production data).
+
+Build and quality:
+
+- `:app:testDevDebugUnitTest` successful
+- `:app:assembleDevDebugAndroidTest` successful
+- `:app:assembleDevDebug` successful
+- `:app:lint` successful
+
+Known limitations:
+
+- Live product list/details/create/update/action execution remains pending confirmed backend endpoint paths, query/body keys, and enum values.
+- Category selection in the product form depends on the category-lookup endpoint; full category management (CRUD) is intentionally out of scope for this phase.
+- Product image URLs are modeled, but the UI always renders a static placeholder with an explicit "unavailable" content description because no image-loading dependency is approved and the image storage/CDN contract is unconfirmed.

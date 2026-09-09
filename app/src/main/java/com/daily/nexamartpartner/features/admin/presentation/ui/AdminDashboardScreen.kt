@@ -77,13 +77,13 @@ class AdminDashboardScreen : Fragment(R.layout.fragment_admin_dashboard) {
             navigator.navigate(R.id.adminOrdersFragment)
         }
         binding.productsActionButton.setOnClickListener {
-            navigator.navigate(R.id.adminProductsPlaceholderFragment)
+            navigator.navigate(R.id.adminProductsFragment)
         }
         binding.categoriesActionButton.setOnClickListener {
             navigator.navigate(R.id.adminCategoriesPlaceholderFragment)
         }
         binding.deliveryPartnersActionButton.setOnClickListener {
-            navigator.navigate(R.id.adminDeliveryPartnersPlaceholderFragment)
+            navigator.navigate(R.id.adminDeliveryPartnersFragment)
         }
         binding.customersActionButton.setOnClickListener {
             navigator.navigate(R.id.adminCustomersPlaceholderFragment)

@@ -46,17 +46,32 @@
         </fragment>
 
         <fragment
-            android:id="@+id/adminProductsPlaceholderFragment"
-            android:name="com.daily.nexamartpartner.features.shared.presentation.ui.FeaturePlaceholderFragment"
-            android:label="Admin Products">
+            android:id="@+id/adminProductsFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.ProductListScreen"
+            android:label="Admin Products" />
+
+        <fragment
+            android:id="@+id/adminProductDetailsFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.ProductDetailsScreen"
+            android:label="Product Details">
             <argument
-                android:name="featureTitle"
-                android:defaultValue="Products"
+                android:name="productId"
+                app:argType="string" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/adminProductFormFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.ProductFormScreen"
+            android:label="Product Form">
+            <argument
+                android:name="mode"
+                android:defaultValue="CREATE"
                 app:argType="string" />
             <argument
-                android:name="featureSubtitle"
-                android:defaultValue="Product management will be available in the next module."
-                app:argType="string" />
+                android:name="productId"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
         </fragment>
 
         <fragment
@@ -88,16 +103,16 @@
         </fragment>
 
         <fragment
-            android:id="@+id/adminDeliveryPartnersPlaceholderFragment"
-            android:name="com.daily.nexamartpartner.features.shared.presentation.ui.FeaturePlaceholderFragment"
-            android:label="Admin Delivery Partners">
+            android:id="@+id/adminDeliveryPartnersFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.DeliveryPartnerListScreen"
+            android:label="Delivery Partners" />
+
+        <fragment
+            android:id="@+id/adminDeliveryPartnerDetailsFragment"
+            android:name="com.daily.nexamartpartner.features.admin.presentation.ui.DeliveryPartnerDetailsScreen"
+            android:label="Delivery Partner Details">
             <argument
-                android:name="featureTitle"
-                android:defaultValue="Delivery Partners"
-                app:argType="string" />
-            <argument
-                android:name="featureSubtitle"
-                android:defaultValue="Delivery partner management will be available in the next module."
+                android:name="partnerId"
                 app:argType="string" />
         </fragment>
 

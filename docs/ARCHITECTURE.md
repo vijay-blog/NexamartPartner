@@ -50,7 +50,7 @@ Android-side defense in depth implemented:
 - Runtime navigation guard (`NavigationGuard`) against unauthorized/unknown destinations
 - Session clear + root reset on logout and invalid session
 
-## Root navigation architecture (Phase 5)
+## Root navigation architecture (Phase 6)
 
 Navigation technology: **XML Navigation Component**.
 
@@ -64,6 +64,8 @@ Root graph structure:
   - `adminDashboardFragment`
   - `adminOrdersFragment`
   - `adminOrderDetailsFragment`
+  - `adminDeliveryPartnersFragment`
+  - `adminDeliveryPartnerDetailsFragment`
   - admin feature placeholder destinations for future phases
 - `deliveryGraph`
   - `deliveryDashboardPlaceholderFragment`
@@ -169,6 +171,99 @@ Contract strategy:
 
 - `AdminOrdersContract` defines order-list/details/status-update/cancel request contracts.
 - Current wiring uses `PendingBackendAdminOrdersContract`; APIs stay blocked until backend contracts are confirmed.
+
+## Admin delivery partner management architecture (Phase 6)
+
+Implemented stack:
+
+- `DeliveryPartnerListScreen` and `DeliveryPartnerDetailsScreen`
+- `DeliveryPartnerListViewModel` and `DeliveryPartnerDetailsViewModel`
+- list, details, and update use cases
+- `DeliveryPartnerRepository`
+- `DeliveryPartnerRemoteDataSource`
+- `DeliveryPartnerApi`
+
+Data flow and behavior:
+
+- UI -> ViewModel -> Use Case -> Repository -> Remote Data Source -> Retrofit API -> backend.
+- Search is debounced and sent to the backend with the selected account, verification, and availability filters.
+- Pagination, refresh, empty, error, and contract-unavailable states are modeled explicitly.
+- Details expose profile, account, availability, vehicle, statistics, current orders, and recent history only from backend response data.
+- Availability is read-only. Assignment eligibility uses the nullable backend `isAssignable` value and is never calculated locally.
+- Admin mutation buttons come only from backend-provided `allowedActions`. All mutations require confirmation and reject duplicate submissions.
+- A `409 Conflict` surfaces the mapped backend error and refreshes partner details.
+
+Partner state model:
+
+- Account: `PENDING`, `ACTIVE`, `INACTIVE`, `SUSPENDED`, `REJECTED`
+- Verification: `PENDING`, `VERIFIED`, `REJECTED`
+- Availability: `ONLINE`, `OFFLINE`
+- Work state: `AVAILABLE`, `BUSY`
+- Admin actions: `VERIFY`, `REJECT`, `ACTIVATE`, `DEACTIVATE`, `SUSPEND`, `REACTIVATE`
+- Unknown backend values map to explicit `UNKNOWN` UI states rather than guessed behavior.
+
+Order relationship:
+
+- Partner details current orders reuse the Phase 5 Admin Order Details destination.
+- Order details can open the shared partner details destination when the backend supplies `partnerId`.
+- Both destinations remain ADMIN-only through the central authorization policy.
+
+Contract strategy:
+
+- `DeliveryPartnerContract` isolates list/detail/action paths, list query keys, and mutation body fields.
+- Current wiring uses `PendingBackendDeliveryPartnerContract`, so no unverified endpoint or payload is sent.
+- The UI presents a production-safe unavailable state until the external backend contract is confirmed.
+
+## Admin product management architecture (Phase 7)
+
+Implemented stack:
+
+- `ProductListScreen`, `ProductDetailsScreen`, and `ProductFormScreen` (create/edit)
+- `ProductListViewModel`, `ProductDetailsViewModel`, `ProductFormViewModel`
+- list, details, category-lookup, create, update, and admin-action use cases
+- `ProductManagementRepository` / `ProductManagementRepositoryImpl`
+- `ProductManagementRemoteDataSource` / `ProductManagementRemoteDataSourceImpl`
+- `ProductManagementApi`
+- `ProductManagementContract` / `PendingBackendProductManagementContract`
+
+Data flow and behavior:
+
+- UI -> ViewModel -> Use Case -> Repository -> Remote Data Source -> Retrofit API -> backend, matching the Phase 5/6 layering exactly.
+- Product list search is debounced and sent to the backend together with the selected status and category filters and sort order.
+- Pagination, refresh (preserving current search/filter/sort criteria), duplicate-request guards, empty, error, and contract-unavailable states are modeled explicitly, mirroring `AdminOrdersViewModel`/`DeliveryPartnerListViewModel`.
+- Product details expose only backend-supplied optional fields (description, category, price, discounted price, discount percent, stock, SKU, unit, timestamps). Admin action buttons (`ACTIVATE`, `DEACTIVATE`, `DELETE`, `EDIT`) are rendered only from the backend-provided `allowedActions` list; the app never infers valid transitions locally.
+- Activate/deactivate/delete require confirmation and reject duplicate in-flight submissions. A `409 Conflict` on an action refreshes product details instead of trusting stale local state. `EDIT` navigates to the product form in edit mode.
+- The product form supports both create and edit modes from one `ProductFormViewModel`/`ProductFormScreen`. Edit mode loads existing product details to prefill fields; both modes load category options from the repository for the category selector. Local baseline validation enforces non-empty name, a selected category, a non-negative decimal price, an optional discount between 0 and 100, and an optional non-negative integer stock — but the backend remains authoritative once its contract is confirmed. The form tracks a dirty flag, blocks duplicate save submissions, and asks for confirmation before discarding unsaved changes on back navigation (both the toolbar back button and the system back gesture).
+- Monetary values are modeled as `BigDecimal`/exact decimal strings end-to-end; the app never computes discounted or final prices client-side.
+
+Product/category state model:
+
+- Status: `ACTIVE`, `INACTIVE`, `DRAFT`, `OUT_OF_STOCK` (+ `UNKNOWN` fallback)
+- Availability: `IN_STOCK`, `LOW_STOCK`, `OUT_OF_STOCK` (+ `UNKNOWN` fallback)
+- Admin actions: `ACTIVATE`, `DEACTIVATE`, `DELETE`, `EDIT`
+- Unknown backend values map to explicit `UNKNOWN` states rather than guessed behavior, consistent with `OrderStatus`/`PartnerAccountStatus`.
+
+Category lookup (not Category CRUD):
+
+- `GetProductCategoryOptionsUseCase` / `ProductManagementRepository.getCategoryOptions()` exposes only an id+name lookup for the product form's category selector.
+- Full category create/read/update/delete management is explicitly out of scope for this phase (reserved for a future Phase 8) and is not implemented here.
+
+Image handling:
+
+- `ProductSummary`/`ProductDetails` model an optional `imageUrl`, but no image-loading library (Glide/Coil/Picasso/etc.) is present in this project and none was added.
+- The list card and details screen always render a static placeholder icon with an explicit "Product image unavailable" content description instead of attempting to load `imageUrl`, because the image storage/CDN contract is unconfirmed.
+
+Contract strategy:
+
+- `ProductManagementContract` isolates list/details/category/create/update/action paths, list query keys, and mutation body fields.
+- Current wiring uses `PendingBackendProductManagementContract`, so no unverified endpoint, query key, or payload is ever sent; the remote data source returns a `CONTRACT_MISSING` failure before any network call is attempted.
+- The UI presents a production-safe unavailable state (list, details, and form) until the external backend contract is confirmed.
+
+Navigation:
+
+- Replaced the `adminProductsPlaceholderFragment` placeholder with real `adminProductsFragment`, `adminProductDetailsFragment`, and `adminProductFormFragment` destinations in `adminGraph`.
+- All three destinations are ADMIN-only via `AppDestination`/`AuthorizationPolicy`/`NavigationGuard`; DELIVERY_PARTNER navigation attempts are redirected exactly like the Phase 5/6 admin destinations.
+- The Admin Dashboard's Products quick action now opens the real product list instead of the placeholder.
 
 ## Delivery and order lifecycle target (domain constants for later phases)
 

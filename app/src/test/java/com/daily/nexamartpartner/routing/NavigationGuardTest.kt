@@ -35,6 +35,33 @@ class NavigationGuardTest {
         assertEquals(R.id.deliveryGraph, destination)
     }
 
+    @Test
+    fun `delivery request to admin partner details redirects to delivery graph`() {
+        val destination = NavigationGuard.resolveAuthorizedDestination(
+            AuthState.AuthenticatedDeliveryPartner(testSession(UserRole.DELIVERY_PARTNER)),
+            R.id.adminDeliveryPartnerDetailsFragment
+        )
+        assertEquals(R.id.deliveryGraph, destination)
+    }
+
+    @Test
+    fun `delivery request to admin product management redirects to delivery graph`() {
+        val destination = NavigationGuard.resolveAuthorizedDestination(
+            AuthState.AuthenticatedDeliveryPartner(testSession(UserRole.DELIVERY_PARTNER)),
+            R.id.adminProductsFragment
+        )
+        assertEquals(R.id.deliveryGraph, destination)
+    }
+
+    @Test
+    fun `authenticated admin request to product form is authorized`() {
+        val destination = NavigationGuard.resolveAuthorizedDestination(
+            AuthState.AuthenticatedAdmin(testSession(UserRole.ADMIN)),
+            R.id.adminProductFormFragment
+        )
+        assertEquals(R.id.adminProductFormFragment, destination)
+    }
+
     private fun testSession(role: UserRole): UserSession {
         return UserSession(
             accessToken = "access",

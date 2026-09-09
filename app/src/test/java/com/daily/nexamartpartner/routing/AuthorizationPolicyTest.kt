@@ -35,4 +35,26 @@ class AuthorizationPolicyTest {
             )
         )
     }
+
+    @Test
+    fun `delivery cannot access admin delivery partner management`() {
+        assertFalse(
+            AuthorizationPolicy.canAccess(
+                UserRole.DELIVERY_PARTNER,
+                AppDestination.ADMIN_DELIVERY_PARTNERS
+            )
+        )
+    }
+
+    @Test
+    fun `admin can access product details and form destinations`() {
+        assertTrue(AuthorizationPolicy.canAccess(UserRole.ADMIN, AppDestination.ADMIN_PRODUCT_DETAILS))
+        assertTrue(AuthorizationPolicy.canAccess(UserRole.ADMIN, AppDestination.ADMIN_PRODUCT_FORM))
+    }
+
+    @Test
+    fun `delivery cannot access product details and form destinations`() {
+        assertFalse(AuthorizationPolicy.canAccess(UserRole.DELIVERY_PARTNER, AppDestination.ADMIN_PRODUCT_DETAILS))
+        assertFalse(AuthorizationPolicy.canAccess(UserRole.DELIVERY_PARTNER, AppDestination.ADMIN_PRODUCT_FORM))
+    }
 }

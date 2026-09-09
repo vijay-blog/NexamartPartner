@@ -205,6 +205,150 @@ Order details:
 - `5xx`: retryable server errors.
 - No stack traces, SQL internals, or secret/internal fields in error payloads.
 
+## Phase 6 — Admin delivery partner management contract status
+
+### Confirmed in this repository
+
+- No Java Spring Boot source, entity definitions, role enums, migrations, or controllers are present.
+- Existing backend partner states and endpoint contracts therefore cannot be verified from this workspace.
+- Android uses `PendingBackendDeliveryPartnerContract`; live calls remain blocked until paths, query keys, action payloads, and enum values are confirmed.
+
+### BACKEND REQUIRED — Admin delivery partner APIs
+
+| Capability | Requirement |
+|---|---|
+| Partner list | ADMIN-authorized `GET` endpoint with server-side pagination and search/filter support |
+| Partner details | ADMIN-authorized `GET` endpoint by partner ID |
+| Partner action | ADMIN-authorized mutation endpoint for only backend-supported transitions |
+| Current orders | Include current assigned order summaries in details, or provide a confirmed related endpoint |
+| Recent history/statistics | Include only when authorized and supported by backend |
+
+The exact paths and HTTP mutation method are **BACKEND REQUIRED**. Android does not assume that the conceptual `/api/v1/admin/delivery-partners` paths listed above exist.
+
+### Required list query contract
+
+- Page index and page-size parameter keys.
+- Search parameter key and supported fields (name, phone, email, or partner ID).
+- Account-status, verification-status, and availability filter keys and exact accepted enum values.
+- Spring Data-compatible page response fields, or a confirmed mapping for:
+  - content
+  - page number
+  - page size
+  - total pages
+  - total elements
+  - last-page indicator
+
+### Required response fields
+
+Partner summary:
+
+- `partnerId`, `name`
+- optional `phone`, `profileImageUrl`
+- `accountStatus`, `verificationStatus`, `availability`, `workState`
+- optional `activeDeliveries`
+- nullable backend-authoritative `isAssignable`
+
+Partner details:
+
+- summary identity and state fields
+- optional `email`, `registeredAt`, `lastActiveAt`
+- optional vehicle type, vehicle number, and safe license reference
+- optional delivery statistics
+- current-order and recent-history summaries (`orderId`, status, timestamp)
+- nullable `isAssignable`
+- `allowedActions` containing only currently valid Admin transitions
+
+### Status and action contract
+
+- Backend enum names are authoritative and must be confirmed before enabling the contract.
+- Backend must validate every verification/account transition transactionally.
+- Android does not infer valid actions from account or verification status; it renders only `allowedActions`.
+- Rejection or suspension reasons are sent only when the confirmed backend contract supports/requires them.
+- Admin cannot modify online/offline availability unless a future backend contract explicitly authorizes it.
+
+### Authorization, privacy, and conflict requirements
+
+- All Admin partner-management endpoints must enforce the backend project's ADMIN authorization convention.
+- DELIVERY_PARTNER and CUSTOMER roles must receive `403`.
+- DTOs must exclude passwords, tokens, internal security fields, and unnecessary identity documents.
+- `401`: invalid session; Android invokes centralized session-expiration handling.
+- `404`: partner not found.
+- `409`: stale state or active-delivery conflict; Android reports the conflict and refreshes details.
+- `422`: invalid transition or validation failure.
+- `429` and `5xx`: safe mapped errors without backend internals.
+
+## Phase 7 — Admin product management contract status
+
+### Confirmed in this repository
+
+- No Java Spring Boot source, entity definitions, migrations, or controllers exist in this repository, so product/category endpoint contracts cannot be verified here.
+- Android uses `PendingBackendProductManagementContract`; live calls remain blocked until paths, query keys, create/update/action body keys, and enum values are confirmed.
+
+### BACKEND REQUIRED — Admin product APIs
+
+| Capability | Requirement |
+|---|---|
+| Product list | ADMIN-authorized `GET` endpoint with server-side pagination, search, status/category filters, and sort |
+| Product details | ADMIN-authorized `GET` endpoint by product id |
+| Category lookup | ADMIN-authorized `GET` endpoint returning `categoryId`/`name` pairs only, for product-form selection (full category CRUD is explicitly out of scope for this phase) |
+| Product creation | ADMIN-authorized mutation endpoint with backend-side field validation |
+| Product update | ADMIN-authorized mutation endpoint with backend-side field validation |
+| Product action | ADMIN-authorized mutation endpoint for only backend-supported transitions (`ACTIVATE`/`DEACTIVATE`/`DELETE`) |
+
+The exact paths and HTTP mutation methods are **BACKEND REQUIRED**. Android does not assume any conceptual `/api/v1/admin/products` path exists.
+
+### Required list query contract
+
+- Page index and page-size parameter keys.
+- Search parameter key and supported fields (name, SKU, or category).
+- Status and category filter keys and exact accepted enum/id values.
+- Sort parameter key and accepted values (e.g. newest, name, price ascending/descending).
+- Spring Data-compatible page response fields, or a confirmed mapping for content/page number/page size/total pages/total elements/last-page indicator.
+
+### Required response fields
+
+Product summary:
+
+- `productId`, `name`
+- optional `categoryId`, `categoryName`
+- exact decimal `price` and optional backend-computed `discountedPrice` (never computed client-side)
+- `currencyCode`, optional `stock`, optional `unit`
+- `status`, `availability`
+- optional `imageUrl` (image storage/CDN contract, and an approved image-loading dependency, are both unconfirmed; the app shows a static placeholder instead of loading this URL)
+
+Product details:
+
+- summary identity/state fields
+- optional `description`, `discountPercent`, `sku`, `createdAt`, `updatedAt`
+- `allowedActions` containing only currently valid Admin transitions (`ACTIVATE`/`DEACTIVATE`/`DELETE`/`EDIT`)
+
+Category option (lookup only):
+
+- `categoryId`, `name`
+
+### Create/update request contract
+
+- Exact required vs optional field set for create and update is **BACKEND REQUIRED**.
+- Android models `name`, `description`, `categoryId`, `price`, `discountPercent`, `stock`, `sku`, and `unit` as a draft, but only performs local baseline validation (name required, category required, price a non-negative decimal, discount 0-100 when provided, stock a non-negative integer when provided). The backend remains authoritative for all business validation.
+- Prices/discounts must be sent and returned as exact decimal strings; Android never derives a final/discounted price itself.
+
+### Status and action contract
+
+- Backend enum names are authoritative and must be confirmed before enabling the contract.
+- Android does not infer valid actions from product status/availability locally; it renders only `allowedActions`.
+- Deleting a product must be backend-validated (e.g., no undeletable references) before returning success.
+
+### Authorization, privacy, and conflict requirements
+
+- All Admin product-management endpoints must enforce the backend project's ADMIN authorization convention.
+- DELIVERY_PARTNER and CUSTOMER roles must receive `403`.
+- Product data returned to Admin must remain compatible with what customer-facing and historical order flows already expect (e.g., product name/price snapshots on existing orders must not be silently changed by catalog edits).
+- `401`: invalid session; Android invokes centralized session-expiration handling.
+- `404`: product not found.
+- `409`: stale state/conflicting edit; Android refreshes read-only details, while the edit form preserves the unsaved draft and asks the Admin to review before retrying.
+- `422`: validation failure.
+- `429` and `5xx`: safe mapped errors without backend internals.
+
 ## Delivery partner APIs
 
 | API | Method | Authorization | Role | Purpose |

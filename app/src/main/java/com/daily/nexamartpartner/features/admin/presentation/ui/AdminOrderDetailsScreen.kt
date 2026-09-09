@@ -185,6 +185,15 @@ class AdminOrderDetailsScreen : Fragment(R.layout.fragment_admin_order_details) 
             R.string.admin_order_details_delivery_partner_template,
             details.delivery?.partnerName ?: getString(R.string.admin_order_details_unavailable)
         )
+        binding.deliveryPartnerText.isClickable = details.delivery?.partnerId != null
+        binding.deliveryPartnerText.setOnClickListener(
+            details.delivery?.partnerId?.let { partnerId ->
+                View.OnClickListener {
+                    val args = Bundle().apply { putString("partnerId", partnerId) }
+                    findNavController().navigate(R.id.adminDeliveryPartnerDetailsFragment, args)
+                }
+            }
+        )
         binding.deliveryAssignedAtText.text = getString(
             R.string.admin_order_details_delivery_assigned_at_template,
             details.delivery?.assignedAt ?: getString(R.string.admin_order_details_unavailable)

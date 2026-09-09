@@ -156,7 +156,8 @@ class AdminOrdersRepositoryImpl(
             DeliveryInfo(
                 status = it.status?.trim(),
                 partnerName = it.partnerName?.trim(),
-                assignedAt = it.assignedAt?.trim()
+                assignedAt = it.assignedAt?.trim(),
+                partnerId = it.partnerId?.trim()
             )
         }
 
