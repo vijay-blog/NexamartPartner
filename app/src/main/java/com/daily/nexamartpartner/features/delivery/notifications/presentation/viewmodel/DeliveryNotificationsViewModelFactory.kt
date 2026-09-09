@@ -9,8 +9,8 @@ class DeliveryNotificationsViewModelFactory(
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (!modelClass.isAssignableFrom(DeliveryNotificationsViewModel::class.java)) {
-            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        require(modelClass.isAssignableFrom(DeliveryNotificationsViewModel::class.java)) {
+            "Unknown ViewModel class: ${modelClass.name}"
         }
         return DeliveryNotificationsViewModel(get, read, readAll) as T
     }

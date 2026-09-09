@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+private val EMAIL_REGEX = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+
 data class LoginUiState(
     val identifier: String = "",
     val password: String = "",
@@ -55,8 +57,8 @@ class LoginViewModel(
 
         var identifierError: String? = null
         var passwordError: String? = null
-        if (current.identifier.isBlank()) {
-            identifierError = "Please enter your phone or email."
+        if (!EMAIL_REGEX.matches(current.identifier.trim())) {
+            identifierError = "Please enter your email address."
         }
         if (current.password.isBlank()) {
             passwordError = "Please enter your password."

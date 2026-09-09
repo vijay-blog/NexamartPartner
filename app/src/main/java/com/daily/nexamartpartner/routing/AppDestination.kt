@@ -10,7 +10,6 @@ enum class DestinationScope {
 
 enum class AppDestination(val navId: Int, val scope: DestinationScope) {
     SPLASH(R.id.splashFragment, DestinationScope.PUBLIC),
-    AUTH_GRAPH(R.id.authGraph, DestinationScope.PUBLIC),
     LOGIN(R.id.loginFragment, DestinationScope.PUBLIC),
     ACCESS_DENIED(R.id.unsupportedRoleFragment, DestinationScope.PUBLIC),
 

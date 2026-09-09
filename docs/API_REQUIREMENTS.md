@@ -17,6 +17,19 @@ This document defines required backend contracts for this app. APIs below must b
 | `/api/v1/auth/logout` | POST | Bearer token | ADMIN, DELIVERY_PARTNER | Invalidate session/tokens |
 | `/api/v1/auth/me` | GET | Bearer token | ADMIN, DELIVERY_PARTNER | Resolve authenticated user/role |
 
+### Email/password account creation (new app flow)
+
+The Android app now provides a complete email/password registration UI and a contract-gated registration data layer. The existing backend source is not present in this repository, so the registration endpoint and request field names must be confirmed before enabling live account creation.
+
+Required backend contract:
+- Public registration endpoint under `/api/v1/auth/*` (exact path must be confirmed).
+- Request fields: name, email, password (exact field names must be confirmed).
+- Successful response may return a message/user; registration does not assume tokens and does not auto-login.
+- Duplicate email should return a documented validation/conflict response.
+- Password must be hashed server-side and never returned to Android.
+
+The login flow is now explicitly email + password and sends `email` and `password` through `ConfigurableAuthRequestContract`.
+
 ### Required login response
 
 ```json

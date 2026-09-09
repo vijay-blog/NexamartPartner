@@ -70,12 +70,20 @@ class MainActivity : AppCompatActivity() {
                 authCoordinatorViewModel.authState.collect { authState ->
                     val targetRootId = AuthDestinationResolver.resolve(authState)
                     if (!isAtOrWithinDestination(navController, targetRootId)) {
-                        navController.navigate(targetRootId) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                        // Use the resource-ID overload explicitly. With Navigation 2.9.x,
+                        // navigate(Int) can resolve to the typed-route overload and interpret
+                        // the destination ID as a route of type Int, causing:
+                        // "Destination with route Int cannot be found in navigation graph".
+                        navController.navigate(
+                            targetRootId,
+                            null,
+                            navOptions {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
-                        }
+                        )
                     }
                 }
             }

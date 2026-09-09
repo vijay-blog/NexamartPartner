@@ -31,3 +31,12 @@ Before production release, run on a machine/CI environment with Gradle 9.5.0 ava
 ## Known contract dependency
 
 The Android workspace does not include the Java Spring Boot backend. Live authentication, orders, categories, customers, delivery operations, earnings, notifications, profile and availability success-path tests therefore remain dependent on the real backend API contract/environment.
+
+## Phase 25.1 Runtime Regression Fix — 2026-09-09
+
+- Reproduced startup crash reported on the dev build:
+  `IllegalArgumentException: Destination with route Int cannot be found in navigation graph`.
+- Root cause: `MainActivity.observeAuthState()` used the one-argument `NavController.navigate(Int)` call, which under Navigation 2.9.x can resolve through the typed-route overload and treat the resource ID as an `Int` route.
+- Fix: switched auth-root navigation to the explicit resource-ID overload `navigate(destinationId, Bundle?, NavOptions?)`.
+- Added regression unit coverage for `AuthDestinationResolver` resource-ID mappings.
+- Gradle test execution remains environment-blocked because Gradle 9.5.0 must be downloaded from `services.gradle.org`.

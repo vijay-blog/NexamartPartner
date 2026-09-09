@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:strokeColor="@color/nxm_outline"
+            app:strokeWidth="1dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/register_title" android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/register_subtitle" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/nameInputLayout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:hint="@string/name_label">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/nameInputEditText" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/cd_name_input" android:inputType="textPersonName" android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/emailInputLayout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="@string/email_label">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/emailInputEditText" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/cd_email_input" android:inputType="textEmailAddress" android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/passwordInputLayout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="@string/password_label" app:endIconMode="password_toggle">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/passwordInputEditText" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/cd_password_input" android:inputType="textPassword" android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/confirmPasswordInputLayout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="@string/confirm_password_label" app:endIconMode="password_toggle">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/confirmPasswordInputEditText" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/cd_confirm_password_input" android:inputType="textPassword" android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView android:id="@+id/registerErrorText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:textAppearance="@style/TextAppearance.Material3.BodySmall" android:textColor="@color/nxm_error" android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/registerButton" style="@style/Widget.Material3.Button" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:minHeight="52dp" android:text="@string/create_account_button" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:gravity="center" android:text="@string/already_have_account" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/backToLoginButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/back_to_login_button" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

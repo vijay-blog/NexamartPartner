@@ -123,14 +123,19 @@ import com.daily.nexamartpartner.features.admin.domain.usecase.UpdateDeliveryPar
 import com.daily.nexamartpartner.features.admin.domain.usecase.UpdateProductUseCase
 import com.daily.nexamartpartner.features.auth.data.contract.AuthRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendAuthRequestContract
+import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendRegistrationRequestContract
+import com.daily.nexamartpartner.features.auth.data.repository.RegistrationRepositoryImpl
 import com.daily.nexamartpartner.features.auth.data.repository.AuthRepositoryImpl
 import com.daily.nexamartpartner.features.auth.data.source.AuthApi
 import com.daily.nexamartpartner.features.auth.data.source.AuthRemoteDataSource
 import com.daily.nexamartpartner.features.auth.data.source.AuthRemoteDataSourceImpl
+import com.daily.nexamartpartner.features.auth.data.source.RegistrationApi
+import com.daily.nexamartpartner.features.auth.data.source.RegistrationRemoteDataSourceImpl
 import com.daily.nexamartpartner.features.auth.domain.repository.AuthRepository
 import com.daily.nexamartpartner.features.auth.domain.session.SessionManager
 import com.daily.nexamartpartner.features.auth.domain.usecase.LoginUseCase
 import com.daily.nexamartpartner.features.auth.domain.usecase.LogoutUseCase
+import com.daily.nexamartpartner.features.auth.domain.usecase.RegisterUseCase
 import com.daily.nexamartpartner.features.auth.domain.usecase.RestoreSessionUseCase
 import com.daily.nexamartpartner.features.auth.presentation.state.AuthStateStore
 import retrofit2.Retrofit
@@ -148,6 +153,7 @@ class AppContainer(context: Context) {
 
     private val retrofit: Retrofit = ApiClientFactory.create(authHeaderInterceptor, networkConnectivityMonitor)
     private val authApi: AuthApi = retrofit.create(AuthApi::class.java)
+    private val registrationApi: RegistrationApi = retrofit.create(RegistrationApi::class.java)
     private val adminDashboardApi: AdminDashboardApi = retrofit.create(AdminDashboardApi::class.java)
     private val adminOrdersApi: AdminOrdersApi = retrofit.create(AdminOrdersApi::class.java)
     private val deliveryPartnerApi: DeliveryPartnerApi = retrofit.create(DeliveryPartnerApi::class.java)
@@ -161,6 +167,7 @@ class AppContainer(context: Context) {
     private val deliveryPartnerProfileApi: DeliveryPartnerProfileApi = retrofit.create(DeliveryPartnerProfileApi::class.java)
     private val deliveryAvailabilityApi: DeliveryAvailabilityApi = retrofit.create(DeliveryAvailabilityApi::class.java)
     private val authRequestContract: AuthRequestContract = PendingBackendAuthRequestContract()
+    private val registrationRequestContract = PendingBackendRegistrationRequestContract()
     private val adminDashboardContract: AdminDashboardContract = PendingBackendAdminDashboardContract()
     private val adminOrdersContract: AdminOrdersContract = PendingBackendAdminOrdersContract()
     private val deliveryPartnerContract: DeliveryPartnerContract = PendingBackendDeliveryPartnerContract()
@@ -179,6 +186,13 @@ class AppContainer(context: Context) {
         api = authApi,
         requestContract = authRequestContract,
         apiCallExecutor = apiCallExecutor
+    )
+    private val registrationRepository = RegistrationRepositoryImpl(
+        RegistrationRemoteDataSourceImpl(
+            api = registrationApi,
+            requestContract = registrationRequestContract,
+            apiCallExecutor = apiCallExecutor
+        )
     )
     private val adminDashboardRemoteDataSource: AdminDashboardRemoteDataSource = AdminDashboardRemoteDataSourceImpl(
         api = adminDashboardApi,
@@ -249,6 +263,7 @@ class AppContainer(context: Context) {
     var deliveryOrderWorkflowRepositoryOverride: DeliveryOrderWorkflowRepository? = null
 
     val loginUseCase = LoginUseCase(authRepository)
+    val registerUseCase = RegisterUseCase(registrationRepository)
     val restoreSessionUseCase = RestoreSessionUseCase(authRepository)
     val logoutUseCase = LogoutUseCase(authRepository)
 
