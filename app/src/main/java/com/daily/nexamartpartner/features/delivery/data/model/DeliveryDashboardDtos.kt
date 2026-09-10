@@ -11,5 +11,13 @@ data class DeliveryDashboardResponseDto(
     @field:Json(name = "todayEarnings") val todayEarnings: String?,
     @field:Json(name = "currencyCode") val currencyCode: String?,
     @field:Json(name = "availability") val availability: String?,
-    @field:Json(name = "recentOrders") val recentOrders: List<DeliveryOrderSummaryDto>?
+    @field:Json(name = "recentOrders") val recentOrders: List<DeliveryDashboardOrderSummaryDto>?
+)
+
+data class DeliveryDashboardOrderSummaryDto(
+    @field:Json(name = "orderId") val orderId: String?,
+    @field:Json(name = "status") val status: String?,
+    @field:Json(name = "customerName") val customerName: String?,
+    @field:Json(name = "createdAt") val createdAt: String?,
+    @field:Json(name = "amount") val amount: String?
 )

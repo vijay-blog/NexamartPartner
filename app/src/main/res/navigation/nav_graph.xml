@@ -9,20 +9,19 @@
         android:name="com.daily.nexamartpartner.features.auth.presentation.ui.SplashFragment"
         android:label="Splash" />
 
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.daily.nexamartpartner.features.auth.presentation.ui.LoginFragment"
-        android:label="Login" />
+    <navigation
+        android:id="@+id/authGraph"
+        app:startDestination="@id/loginFragment">
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.daily.nexamartpartner.features.auth.presentation.ui.LoginFragment"
+            android:label="Login" />
 
-    <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.daily.nexamartpartner.features.auth.presentation.ui.RegisterFragment"
-        android:label="Create Account" />
-
-    <fragment
-        android:id="@+id/unsupportedRoleFragment"
-        android:name="com.daily.nexamartpartner.features.auth.presentation.ui.UnsupportedRoleFragment"
-        android:label="Access Denied" />
+        <fragment
+            android:id="@+id/unsupportedRoleFragment"
+            android:name="com.daily.nexamartpartner.features.auth.presentation.ui.UnsupportedRoleFragment"
+            android:label="Access Denied" />
+    </navigation>
 
     <navigation
         android:id="@+id/adminGraph"

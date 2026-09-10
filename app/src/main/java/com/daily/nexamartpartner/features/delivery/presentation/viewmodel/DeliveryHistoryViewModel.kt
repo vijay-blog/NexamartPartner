@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class DeliveryHistoryViewModel(private val getHistory: GetDeliveryHistoryUseCase) : ViewModel() {
+    data class Filters(val search:String="", val status:String?=null, val fromDate:String?=null, val toDate:String?=null)
     sealed interface Event { data object SessionExpired: Event }
     private val _state=MutableStateFlow(DeliveryHistoryUiState())
     val state:StateFlow<DeliveryHistoryUiState> = _state.asStateFlow()

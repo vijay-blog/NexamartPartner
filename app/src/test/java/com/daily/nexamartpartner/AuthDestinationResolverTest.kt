@@ -28,9 +28,9 @@ class AuthDestinationResolverTest {
     }
 
     @Test
-    fun unauthenticated_resolvesToLoginResourceId() {
+    fun unauthenticated_resolvesToAuthGraphResourceId() {
         assertEquals(
-            R.id.loginFragment,
+            R.id.authGraph,
             AuthDestinationResolver.resolve(AuthState.Unauthenticated)
         )
     }
@@ -43,12 +43,14 @@ class AuthDestinationResolverTest {
         )
     }
 
-    private fun testSession(role: UserRole) = UserSession(
-        accessToken = "access",
-        refreshToken = "refresh",
-        userId = 1L,
-        name = "User",
-        contact = "9999999999",
-        role = role
-    )
+    private fun testSession(role: UserRole): UserSession {
+        return UserSession(
+            accessToken = "access",
+            refreshToken = "refresh",
+            userId = 1L,
+            name = "User",
+            contact = "9999999999",
+            role = role
+        )
+    }
 }

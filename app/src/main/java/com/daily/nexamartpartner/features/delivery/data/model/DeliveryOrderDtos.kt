@@ -21,8 +21,7 @@ data class DeliveryOrderSummaryDto(
     @field:Json(name="status") val status: String?,
     @field:Json(name="paymentStatus") val paymentStatus: String?,
     @field:Json(name="assignedAt") val assignedAt: String?,
-    @field:Json(name="createdAt") val createdAt: String?,
-    @field:Json(name="amount") val amount: String?
+    @field:Json(name="createdAt") val createdAt: String?
 )
 
 data class DeliveryOrderDetailsDto(

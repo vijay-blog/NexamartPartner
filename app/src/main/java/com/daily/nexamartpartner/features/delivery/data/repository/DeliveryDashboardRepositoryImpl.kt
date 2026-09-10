@@ -6,7 +6,7 @@ import com.daily.nexamartpartner.core.result.FailureType
 import com.daily.nexamartpartner.features.delivery.data.model.DeliveryDashboardResponseDto
 import com.daily.nexamartpartner.features.delivery.data.source.DeliveryDashboardDataSource
 import com.daily.nexamartpartner.features.delivery.domain.model.DeliveryDashboard
-import com.daily.nexamartpartner.features.delivery.domain.model.DeliveryOrderSummary
+import com.daily.nexamartpartner.features.delivery.domain.model.DeliveryDashboardOrderSummary
 import com.daily.nexamartpartner.features.delivery.domain.repository.DeliveryDashboardRepository
 import java.math.BigDecimal
 
@@ -25,20 +25,15 @@ class DeliveryDashboardRepositoryImpl(
             if (id.isNullOrEmpty() || status.isNullOrEmpty()) {
                 return AppResult.Failure(AppFailure("Invalid delivery dashboard response.", type = FailureType.SERVER))
             }
-            DeliveryOrderSummary(
+            DeliveryDashboardOrderSummary(
                 orderId = id,
-                customerName = item.customerName?.trim().orEmpty(),
-                customerPhone = item.customerPhone?.trim()?.ifEmpty { null },
-                address = item.address?.trim()?.ifEmpty { null },
-                totalAmount = (item.totalAmount ?: item.amount)?.trim()?.takeIf { it.isNotEmpty() }?.let { value ->
+                status = status,
+                customerName = item.customerName?.trim()?.ifEmpty { null },
+                createdAt = item.createdAt?.trim()?.ifEmpty { null },
+                amount = item.amount?.trim()?.takeIf { it.isNotEmpty() }?.let { value ->
                     value.toBigDecimalOrNull()
                 },
-                currencyCode = item.currencyCode?.trim()?.ifEmpty { null }
-                    ?: dto.currencyCode?.trim()?.ifEmpty { null },
-                status = status,
-                paymentStatus = item.paymentStatus?.trim()?.ifEmpty { null },
-                assignedAt = item.assignedAt?.trim()?.ifEmpty { null },
-                createdAt = item.createdAt?.trim()?.ifEmpty { null }
+                currencyCode = dto.currencyCode?.trim()?.ifEmpty { null }
             )
         }.orEmpty()
 

@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.daily.nexamartpartner.R
 import com.daily.nexamartpartner.databinding.FragmentLoginBinding
 import com.daily.nexamartpartner.di.appContainer
@@ -44,9 +43,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
         binding.loginButton.setOnClickListener {
             loginViewModel.submitLogin()
-        }
-        binding.createAccountButton.setOnClickListener {
-            findNavController().navigate(R.id.registerFragment)
         }
     }
 

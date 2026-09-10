@@ -26,19 +26,19 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             buildConfigField("String", "APP_ENV", "\"development\"")
-            buildConfigField("String", "BASE_URL", "\"https://dev-api.nexamart.example.com/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://zeptopluse-production.up.railway.app/api/v1/\"")
         }
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             buildConfigField("String", "APP_ENV", "\"staging\"")
-            buildConfigField("String", "BASE_URL", "\"https://staging-api.nexamart.example.com/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://zeptopluse-production.up.railway.app/api/v1/\"")
         }
         create("prod") {
             dimension = "environment"
             buildConfigField("String", "APP_ENV", "\"production\"")
-            buildConfigField("String", "BASE_URL", "\"https://api.nexamart.example.com/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://zeptopluse-production.up.railway.app/api/v1/\"")
         }
     }
 

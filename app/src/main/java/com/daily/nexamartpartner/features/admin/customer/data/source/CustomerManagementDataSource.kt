@@ -29,7 +29,8 @@ class CustomerManagementRemoteDataSourceImpl(
     private val contract: CustomerManagementContract,
     private val executor: ApiCallExecutor
 ) : CustomerManagementRemoteDataSource {
-    private fun <T> missing(message: String): AppResult<T> = AppResult.Failure(AppFailure(message, type = FailureType.CONTRACT_MISSING))
+    private fun <T> missing(message: String): AppResult<T> =
+        AppResult.Failure(AppFailure(message, type = FailureType.CONTRACT_MISSING))
 
     override suspend fun list(query: CustomerQuery): AppResult<CustomersPageDto> {
         val path = contract.listPath ?: return missing("Customer list API contract is not confirmed yet.")

@@ -1,16 +1,10 @@
 package com.daily.nexamartpartner.features.delivery.presentation.state
 
 import com.daily.nexamartpartner.features.delivery.domain.model.DeliveryOrderSummary
-
-data class DeliveryHistoryFilters(
-    val search: String = "",
-    val status: String? = null,
-    val fromDate: String? = null,
-    val toDate: String? = null
-)
+import com.daily.nexamartpartner.features.delivery.presentation.viewmodel.DeliveryHistoryViewModel
 
 data class DeliveryHistoryUiState(
-    val filters: DeliveryHistoryFilters = DeliveryHistoryFilters(),
+    val filters: DeliveryHistoryViewModel.Filters = DeliveryHistoryViewModel.Filters(),
     val isRefreshing:Boolean=false,
     val isLoadingMore:Boolean=false,
     val content:Content=Content.Loading

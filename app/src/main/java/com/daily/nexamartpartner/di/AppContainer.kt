@@ -124,14 +124,17 @@ import com.daily.nexamartpartner.features.admin.domain.usecase.UpdateProductUseC
 import com.daily.nexamartpartner.features.auth.data.contract.AuthRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendAuthRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendRegistrationRequestContract
-import com.daily.nexamartpartner.features.auth.data.repository.RegistrationRepositoryImpl
+import com.daily.nexamartpartner.features.auth.data.contract.RegistrationRequestContract
 import com.daily.nexamartpartner.features.auth.data.repository.AuthRepositoryImpl
+import com.daily.nexamartpartner.features.auth.data.repository.RegistrationRepositoryImpl
 import com.daily.nexamartpartner.features.auth.data.source.AuthApi
 import com.daily.nexamartpartner.features.auth.data.source.AuthRemoteDataSource
 import com.daily.nexamartpartner.features.auth.data.source.AuthRemoteDataSourceImpl
 import com.daily.nexamartpartner.features.auth.data.source.RegistrationApi
+import com.daily.nexamartpartner.features.auth.data.source.RegistrationRemoteDataSource
 import com.daily.nexamartpartner.features.auth.data.source.RegistrationRemoteDataSourceImpl
 import com.daily.nexamartpartner.features.auth.domain.repository.AuthRepository
+import com.daily.nexamartpartner.features.auth.domain.repository.RegistrationRepository
 import com.daily.nexamartpartner.features.auth.domain.session.SessionManager
 import com.daily.nexamartpartner.features.auth.domain.usecase.LoginUseCase
 import com.daily.nexamartpartner.features.auth.domain.usecase.LogoutUseCase
@@ -167,7 +170,7 @@ class AppContainer(context: Context) {
     private val deliveryPartnerProfileApi: DeliveryPartnerProfileApi = retrofit.create(DeliveryPartnerProfileApi::class.java)
     private val deliveryAvailabilityApi: DeliveryAvailabilityApi = retrofit.create(DeliveryAvailabilityApi::class.java)
     private val authRequestContract: AuthRequestContract = PendingBackendAuthRequestContract()
-    private val registrationRequestContract = PendingBackendRegistrationRequestContract()
+    private val registrationRequestContract: RegistrationRequestContract = PendingBackendRegistrationRequestContract()
     private val adminDashboardContract: AdminDashboardContract = PendingBackendAdminDashboardContract()
     private val adminOrdersContract: AdminOrdersContract = PendingBackendAdminOrdersContract()
     private val deliveryPartnerContract: DeliveryPartnerContract = PendingBackendDeliveryPartnerContract()
@@ -187,12 +190,10 @@ class AppContainer(context: Context) {
         requestContract = authRequestContract,
         apiCallExecutor = apiCallExecutor
     )
-    private val registrationRepository = RegistrationRepositoryImpl(
-        RegistrationRemoteDataSourceImpl(
-            api = registrationApi,
-            requestContract = registrationRequestContract,
-            apiCallExecutor = apiCallExecutor
-        )
+    private val registrationRemoteDataSource: RegistrationRemoteDataSource = RegistrationRemoteDataSourceImpl(
+        api = registrationApi,
+        requestContract = registrationRequestContract,
+        apiCallExecutor = apiCallExecutor
     )
     private val adminDashboardRemoteDataSource: AdminDashboardRemoteDataSource = AdminDashboardRemoteDataSourceImpl(
         api = adminDashboardApi,
@@ -224,6 +225,8 @@ class AppContainer(context: Context) {
         remoteDataSource = authRemoteDataSource,
         sessionManager = sessionManager
     )
+    private val registrationRepository: RegistrationRepository =
+        RegistrationRepositoryImpl(registrationRemoteDataSource)
     private val adminDashboardRepository: AdminDashboardRepository = AdminDashboardRepositoryImpl(
         remoteDataSource = adminDashboardRemoteDataSource
     )
@@ -263,9 +266,9 @@ class AppContainer(context: Context) {
     var deliveryOrderWorkflowRepositoryOverride: DeliveryOrderWorkflowRepository? = null
 
     val loginUseCase = LoginUseCase(authRepository)
-    val registerUseCase = RegisterUseCase(registrationRepository)
     val restoreSessionUseCase = RestoreSessionUseCase(authRepository)
     val logoutUseCase = LogoutUseCase(authRepository)
+    val registerUseCase = RegisterUseCase(registrationRepository)
 
     fun provideAdminDashboardUseCase(): GetAdminDashboardUseCase {
         return GetAdminDashboardUseCase(adminDashboardRepositoryOverride ?: adminDashboardRepository)

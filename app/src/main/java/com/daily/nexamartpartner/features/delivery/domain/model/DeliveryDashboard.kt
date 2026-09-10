@@ -11,7 +11,7 @@ data class DeliveryDashboard(
     val todayEarnings: BigDecimal?,
     val currencyCode: String?,
     val availability: String?,
-    val recentOrders: List<DeliveryOrderSummary>,
+    val recentOrders: List<DeliveryDashboardOrderSummary>,
     val recentOrdersAvailable: Boolean
 ) {
     val hasMetrics: Boolean
@@ -19,3 +19,12 @@ data class DeliveryDashboard(
     val hasData: Boolean
         get() = hasMetrics || availability != null || recentOrders.isNotEmpty()
 }
+
+data class DeliveryDashboardOrderSummary(
+    val orderId: String,
+    val status: String,
+    val customerName: String?,
+    val createdAt: String?,
+    val amount: BigDecimal?,
+    val currencyCode: String?
+)

@@ -9,12 +9,12 @@ import org.junit.Test
 
 class NavigationGuardTest {
     @Test
-    fun `unauthenticated request to admin is redirected to login`() {
+    fun `unauthenticated request to admin is redirected to auth graph`() {
         val destination = NavigationGuard.resolveAuthorizedDestination(
             authState = AuthState.Unauthenticated,
             requestedDestinationId = R.id.adminOrdersFragment
         )
-        assertEquals(R.id.loginFragment, destination)
+        assertEquals(R.id.authGraph, destination)
     }
 
     @Test

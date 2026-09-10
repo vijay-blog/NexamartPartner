@@ -9,9 +9,9 @@ import org.junit.Test
 
 class AuthDestinationResolverTest {
     @Test
-    fun `unauthenticated routes to login`() {
+    fun `unauthenticated routes to auth graph`() {
         val destination = AuthDestinationResolver.resolve(AuthState.Unauthenticated)
-        assertEquals(R.id.loginFragment, destination)
+        assertEquals(R.id.authGraph, destination)
     }
 
     @Test

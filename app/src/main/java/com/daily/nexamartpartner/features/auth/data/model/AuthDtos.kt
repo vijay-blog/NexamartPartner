@@ -16,8 +16,6 @@ data class LoginResponseDto(
     @field:Json(name = "user") val user: AuthUserDto?
 )
 
-
 data class RegistrationResponseDto(
-    @field:Json(name = "message") val message: String? = null,
-    @field:Json(name = "user") val user: AuthUserDto? = null
+    @field:Json(name = "message") val message: String?
 )
