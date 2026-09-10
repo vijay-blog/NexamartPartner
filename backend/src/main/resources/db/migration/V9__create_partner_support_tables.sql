@@ -1,3 +1,16 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    username VARCHAR(100) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(40),
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(30) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    created_at TIMESTAMP(6) NOT NULL,
+    last_active_at TIMESTAMP(6)
+);
+
 CREATE TABLE IF NOT EXISTS delivery_partner_profiles (
     user_id BIGINT PRIMARY KEY,
     verification_status VARCHAR(30) NOT NULL,
