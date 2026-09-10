@@ -8,7 +8,7 @@ object AuthDestinationResolver {
         return when (state) {
             is AuthState.Loading -> R.id.splashFragment
             is AuthState.Unauthenticated,
-            is AuthState.AuthenticationError -> R.id.authHomeFragment
+            is AuthState.AuthenticationError -> R.id.authGraph
             is AuthState.AuthenticatedAdmin -> R.id.adminGraph
             is AuthState.AuthenticatedDeliveryPartner -> R.id.deliveryGraph
             is AuthState.UnsupportedRole -> R.id.unsupportedRoleFragment

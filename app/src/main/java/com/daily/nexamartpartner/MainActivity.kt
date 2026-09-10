@@ -70,20 +70,7 @@ class MainActivity : AppCompatActivity() {
                 authCoordinatorViewModel.authState.collect { authState ->
                     val targetRootId = AuthDestinationResolver.resolve(authState)
                     if (!isAtOrWithinDestination(navController, targetRootId)) {
-                        // Use the resource-ID overload explicitly. With Navigation 2.9.x,
-                        // navigate(Int) can resolve to the typed-route overload and interpret
-                        // the destination ID as a route of type Int, causing:
-                        // "Destination with route Int cannot be found in navigation graph".
-                        navController.navigate(
-                            targetRootId,
-                            null,
-                            navOptions {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
-                        )
+                        navigateWithRootGraphHop(navController, targetRootId)
                     }
                 }
             }
@@ -103,17 +90,45 @@ class MainActivity : AppCompatActivity() {
             )
             if (!isAtOrWithinDestination(navController, allowedDestination)) {
                 isGuardRedirecting = true
-                navController.navigate(
-                    allowedDestination,
-                    null,
-                    navOptions {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                )
+                navigateWithRootGraphHop(navController, allowedDestination)
             }
+        }
+    }
+
+    private fun navigateWithRootGraphHop(navController: NavController, destinationId: Int) {
+        val targetParentGraphId = when (destinationId) {
+            R.id.authHomeFragment,
+            R.id.adminLoginFragment,
+            R.id.createDeliveryAccountFragment,
+            R.id.loginFragment,
+            R.id.unsupportedRoleFragment -> R.id.authGraph
+            else -> null
+        }
+        val requiresParentHop = targetParentGraphId != null &&
+            !isAtOrWithinDestination(navController, targetParentGraphId)
+        if (requiresParentHop) {
+            navController.navigate(
+                targetParentGraphId,
+                null,
+                navOptions {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            )
+        }
+        if (!isAtOrWithinDestination(navController, destinationId)) {
+            navController.navigate(
+                destinationId,
+                null,
+                navOptions {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            )
         }
     }
 

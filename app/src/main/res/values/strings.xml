@@ -20,8 +20,16 @@
     <string name="admin_invalid_credentials">Invalid admin username or password.</string>
     <string name="create_account_title">Create Delivery Partner Account</string>
     <string name="create_account_subtitle">Create an email and password account on this device.</string>
+    <string name="register_title">Create Delivery Partner Account</string>
+    <string name="register_subtitle">Create an email and password account on this device.</string>
     <string name="full_name_label">Full name</string>
+    <string name="name_label">Full name</string>
     <string name="confirm_password_label">Confirm password</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="back_to_login_button">Back to Login</string>
+    <string name="cd_name_input">Full name input</string>
+    <string name="cd_email_input">Email address input</string>
+    <string name="cd_confirm_password_input">Confirm password input</string>
     <string name="create_account_name_error">Please enter your full name.</string>
     <string name="create_account_email_error">Please enter a valid email address.</string>
     <string name="create_account_password_error">Password must be at least 8 characters.</string>

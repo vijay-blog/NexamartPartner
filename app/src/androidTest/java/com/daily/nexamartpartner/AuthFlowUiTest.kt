@@ -56,14 +56,13 @@ class AuthFlowUiTest {
     }
 
     @Test
-    fun freshLaunchShowsLogin() {
+    fun freshLaunchShowsAuthHome() {
         resetToUnauthenticated()
         ActivityScenario.launch(MainActivity::class.java)
         Thread.sleep(900)
 
-        onView(withId(R.id.identifierInputEditText)).check(matches(isDisplayed()))
-        onView(withId(R.id.passwordInputEditText)).check(matches(isDisplayed()))
-        onView(withId(R.id.loginButton)).check(matches(isDisplayed()))
+        onView(withId(R.id.adminLoginButton)).check(matches(isDisplayed()))
+        onView(withId(R.id.deliveryLoginButton)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -72,6 +71,7 @@ class AuthFlowUiTest {
         ActivityScenario.launch(MainActivity::class.java)
         Thread.sleep(900)
 
+        onView(withId(R.id.deliveryLoginButton)).perform(click())
         onView(withId(R.id.loginButton)).perform(click())
         onView(withText("Please enter your phone or email.")).check(matches(isDisplayed()))
         onView(withText("Please enter your password.")).check(matches(isDisplayed()))

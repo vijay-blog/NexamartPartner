@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: false
+  datasource:
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+nexamart:
+  jwt-secret: ${JWT_SECRET}
+  admin-password: ${ADMIN_PASSWORD}
