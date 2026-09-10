@@ -3,8 +3,8 @@ spring:
     name: nexamart-partner-backend
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/nexamart?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    username: ${MYSQLUSER:root}
+    password: ${MYSQL_ROOT_PASSWORD:DnoEBsWSTTSEmPEXPWUGFVihcTBBxozt}
   jpa:
     hibernate:
       ddl-auto: validate
