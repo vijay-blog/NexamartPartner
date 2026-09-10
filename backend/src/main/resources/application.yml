@@ -1,14 +1,21 @@
 spring:
   application:
     name: nexamart-partner-backend
-  datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/nexamart?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${MYSQLUSER:root}
-    password: ${MYSQL_ROOT_PASSWORD:DnoEBsWSTTSEmPEXPWUGFVihcTBBxozt}
+ datasource:
+    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQL_DATABASE}?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${MYSQLUSER}
+    password: ${MYSQL_ROOT_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+    show-sql: false
+  flyway:
+    enabled: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
   flyway:
     enabled: true
     baseline-on-migrate: true
