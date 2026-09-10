@@ -1,9 +1,41 @@
 spring:
-  jpa:
-    show-sql: false
+  application:
+    name: nexamart-partner-backend
+
   datasource:
-    hikari:
-      maximum-pool-size: ${DB_POOL_SIZE:10}
+    url: jdbc:mysql://mysql.railway.internal:3306/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8080}
+
 nexamart:
-  jwt-secret: ${JWT_SECRET}
-  admin-password: ${ADMIN_PASSWORD}
+  jwt-secret: ${JWT_SECRET:change-this-development-secret-to-at-least-32-characters}
+  access-token-minutes: ${ACCESS_TOKEN_MINUTES:60}
+  refresh-token-days: ${REFRESH_TOKEN_DAYS:30}
+  admin-username: ${ADMIN_USERNAME:admin}
+  admin-password: ${ADMIN_PASSWORD:admin@223}
+  admin-email: ${ADMIN_EMAIL:admin@nexamart.local}
+  admin-name: ${ADMIN_NAME:NexaMart Admin}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
