@@ -3,7 +3,7 @@
     <string name="brand_title">NexaMart Admin &amp; Delivery</string>
     <string name="login_subtitle">Sign in to manage NexaMart operations</string>
     <string name="splash_title">Preparing secure session…</string>
-    <string name="identifier_label">Phone or email</string>
+    <string name="identifier_label">Email address</string>
     <string name="name_label">Name</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
@@ -46,7 +46,7 @@
     <string name="access_restricted_title">Access Restricted</string>
     <string name="back_to_login">Back to Login</string>
     <string name="back_button">Back</string>
-    <string name="validation_identifier_required">Please enter your phone or email.</string>
+    <string name="validation_identifier_required">Please enter your email address.</string>
     <string name="validation_password_required">Please enter your password.</string>
     <string name="invalid_login_details">Invalid login details. Please try again.</string>
     <string name="network_error_message">Unable to connect to the server. Please check your internet connection.</string>
@@ -59,7 +59,7 @@
     <string name="common_retry">Retry</string>
     <string name="common_confirm">Confirm</string>
     <string name="common_cancel">Cancel</string>
-    <string name="cd_identifier_input">Phone or email input</string>
+    <string name="cd_identifier_input">Email address input</string>
     <string name="cd_name_input">Name input</string>
     <string name="cd_email_input">Email input</string>
     <string name="cd_password_input">Password input</string>

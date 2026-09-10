@@ -27,7 +27,8 @@ class AuthHeaderInterceptor(
     }
 
     private fun isPublicAuthPath(path: String): Boolean {
-        return path.endsWith("/auth/login") ||
+        return path.endsWith("/auth/register") ||
+            path.endsWith("/auth/login") ||
             path.endsWith("/auth/send-otp") ||
             path.endsWith("/auth/verify-otp") ||
             path.endsWith("/auth/refresh")

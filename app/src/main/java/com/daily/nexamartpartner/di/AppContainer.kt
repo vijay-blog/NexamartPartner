@@ -1,5 +1,17 @@
 package com.daily.nexamartpartner.di
 
+import com.daily.nexamartpartner.features.delivery.availability.data.contract.ActiveDeliveryAvailabilityContract
+import com.daily.nexamartpartner.features.delivery.profile.data.contract.ActiveDeliveryPartnerProfileContract
+import com.daily.nexamartpartner.features.delivery.notifications.data.contract.ActiveDeliveryNotificationsContract
+import com.daily.nexamartpartner.features.delivery.earnings.data.contract.ActiveDeliveryEarningsContract
+import com.daily.nexamartpartner.features.delivery.data.contract.ActiveDeliveryOrderWorkflowContract
+import com.daily.nexamartpartner.features.delivery.data.contract.ActiveDeliveryDashboardContract
+import com.daily.nexamartpartner.features.admin.customer.data.contract.ActiveCustomerManagementContract
+import com.daily.nexamartpartner.features.admin.category.data.contract.ActiveCategoryManagementContract
+import com.daily.nexamartpartner.features.admin.data.contract.ActiveProductManagementContract
+import com.daily.nexamartpartner.features.admin.data.contract.ActiveDeliveryPartnerContract
+import com.daily.nexamartpartner.features.admin.data.contract.ActiveAdminOrdersContract
+import com.daily.nexamartpartner.features.admin.data.contract.ActiveAdminDashboardContract
 import android.content.Context
 import com.daily.nexamartpartner.core.network.ApiCallExecutor
 import com.daily.nexamartpartner.core.network.ApiClientFactory
@@ -123,6 +135,8 @@ import com.daily.nexamartpartner.features.admin.domain.usecase.UpdateDeliveryPar
 import com.daily.nexamartpartner.features.admin.domain.usecase.UpdateProductUseCase
 import com.daily.nexamartpartner.features.auth.data.contract.AuthRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendAuthRequestContract
+import com.daily.nexamartpartner.features.auth.data.contract.ActiveAuthRequestContract
+import com.daily.nexamartpartner.features.auth.data.contract.ActiveRegistrationRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.PendingBackendRegistrationRequestContract
 import com.daily.nexamartpartner.features.auth.data.contract.RegistrationRequestContract
 import com.daily.nexamartpartner.features.auth.data.repository.AuthRepositoryImpl
@@ -169,20 +183,20 @@ class AppContainer(context: Context) {
     private val deliveryNotificationsApi: DeliveryNotificationsApi = retrofit.create(DeliveryNotificationsApi::class.java)
     private val deliveryPartnerProfileApi: DeliveryPartnerProfileApi = retrofit.create(DeliveryPartnerProfileApi::class.java)
     private val deliveryAvailabilityApi: DeliveryAvailabilityApi = retrofit.create(DeliveryAvailabilityApi::class.java)
-    private val authRequestContract: AuthRequestContract = PendingBackendAuthRequestContract()
-    private val registrationRequestContract: RegistrationRequestContract = PendingBackendRegistrationRequestContract()
-    private val adminDashboardContract: AdminDashboardContract = PendingBackendAdminDashboardContract()
-    private val adminOrdersContract: AdminOrdersContract = PendingBackendAdminOrdersContract()
-    private val deliveryPartnerContract: DeliveryPartnerContract = PendingBackendDeliveryPartnerContract()
-    private val productManagementContract: ProductManagementContract = PendingBackendProductManagementContract()
-    private val categoryManagementContract: CategoryManagementContract = PendingBackendCategoryManagementContract()
-    private val customerManagementContract: CustomerManagementContract = PendingBackendCustomerManagementContract()
-    private val deliveryDashboardContract: DeliveryDashboardContract = PendingBackendDeliveryDashboardContract()
-    private val deliveryOrderWorkflowContract: DeliveryOrderWorkflowContract = PendingBackendDeliveryOrderWorkflowContract()
-    private val deliveryEarningsContract: DeliveryEarningsContract = PendingBackendDeliveryEarningsContract()
-    private val deliveryNotificationsContract: DeliveryNotificationsContract = PendingBackendDeliveryNotificationsContract()
-    private val deliveryPartnerProfileContract: DeliveryPartnerProfileContract = PendingBackendDeliveryPartnerProfileContract()
-    private val deliveryAvailabilityContract: DeliveryAvailabilityContract = PendingBackendDeliveryAvailabilityContract()
+    private val authRequestContract: AuthRequestContract = ActiveAuthRequestContract()
+    private val registrationRequestContract: RegistrationRequestContract = ActiveRegistrationRequestContract()
+    private val adminDashboardContract: AdminDashboardContract = ActiveAdminDashboardContract()
+    private val adminOrdersContract: AdminOrdersContract = ActiveAdminOrdersContract()
+    private val deliveryPartnerContract: DeliveryPartnerContract = ActiveDeliveryPartnerContract()
+    private val productManagementContract: ProductManagementContract = ActiveProductManagementContract()
+    private val categoryManagementContract: CategoryManagementContract = ActiveCategoryManagementContract()
+    private val customerManagementContract: CustomerManagementContract = ActiveCustomerManagementContract()
+    private val deliveryDashboardContract: DeliveryDashboardContract = ActiveDeliveryDashboardContract()
+    private val deliveryOrderWorkflowContract: DeliveryOrderWorkflowContract = ActiveDeliveryOrderWorkflowContract()
+    private val deliveryEarningsContract: DeliveryEarningsContract = ActiveDeliveryEarningsContract()
+    private val deliveryNotificationsContract: DeliveryNotificationsContract = ActiveDeliveryNotificationsContract()
+    private val deliveryPartnerProfileContract: DeliveryPartnerProfileContract = ActiveDeliveryPartnerProfileContract()
+    private val deliveryAvailabilityContract: DeliveryAvailabilityContract = ActiveDeliveryAvailabilityContract()
     private val apiCallExecutor = ApiCallExecutor()
 
     private val authRemoteDataSource: AuthRemoteDataSource = AuthRemoteDataSourceImpl(
