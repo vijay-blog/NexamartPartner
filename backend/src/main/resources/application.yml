@@ -3,9 +3,9 @@ spring:
     name: nexamart-partner-backend
 
   datasource:
-    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: ${MYSQL_URL}
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -24,8 +24,6 @@ spring:
 
 server:
   port: ${PORT:8080}
-  servlet:
-    context-path: /
 
 nexamart:
   jwt-secret: ${JWT_SECRET:change-this-development-secret-to-at-least-32-characters}
