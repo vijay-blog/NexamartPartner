@@ -17,6 +17,8 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    baseline-version: 5
+    table: nexamart_partner_flyway_history
 
   jackson:
     serialization:
@@ -33,7 +35,6 @@ nexamart:
   admin-password: ${ADMIN_PASSWORD:admin@223}
   admin-email: ${ADMIN_EMAIL:admin@nexamart.local}
   admin-name: ${ADMIN_NAME:NexaMart Admin}
-  flyway-repair-on-migrate: ${FLYWAY_REPAIR_ON_MIGRATE:false}
 
 management:
   endpoints:

@@ -16,9 +16,8 @@ Spring Boot 3.3 / Java 17 service for Railway.
 
 partner service uses the shared NexaMart MySQL schema so customer-created orders are immediately visible to the partner service.
 
-## One-time Flyway checksum repair
+## Flyway history
 
-The known legacy V1 checksum is repaired automatically once. For any other
-intentional checksum repair, set `FLYWAY_REPAIR_ON_MIGRATE=true` for one
-deployment, then remove it so subsequent deployments validate migrations
-strictly.
+This service records migrations in `nexamart_partner_flyway_history`, separate
+from other services that share the database. Existing shared schemas are
+baselined at version 5; empty databases still run the initial schema migration.
