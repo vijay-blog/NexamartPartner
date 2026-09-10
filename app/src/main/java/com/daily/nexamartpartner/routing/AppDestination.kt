@@ -12,6 +12,9 @@ enum class AppDestination(val navId: Int, val scope: DestinationScope) {
     SPLASH(R.id.splashFragment, DestinationScope.PUBLIC),
     AUTH_GRAPH(R.id.authGraph, DestinationScope.PUBLIC),
     LOGIN(R.id.loginFragment, DestinationScope.PUBLIC),
+    AUTH_HOME(R.id.authHomeFragment, DestinationScope.PUBLIC),
+    ADMIN_LOGIN(R.id.adminLoginFragment, DestinationScope.PUBLIC),
+    CREATE_DELIVERY_ACCOUNT(R.id.createDeliveryAccountFragment, DestinationScope.PUBLIC),
     ACCESS_DENIED(R.id.unsupportedRoleFragment, DestinationScope.PUBLIC),
 
     ADMIN_GRAPH(R.id.adminGraph, DestinationScope.ADMIN),

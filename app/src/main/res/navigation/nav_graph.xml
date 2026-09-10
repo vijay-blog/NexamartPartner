@@ -11,7 +11,22 @@
 
     <navigation
         android:id="@+id/authGraph"
-        app:startDestination="@id/loginFragment">
+        app:startDestination="@id/authHomeFragment">
+        <fragment
+            android:id="@+id/authHomeFragment"
+            android:name="com.daily.nexamartpartner.features.auth.presentation.ui.AuthHomeFragment"
+            android:label="NexaMart Access" />
+
+        <fragment
+            android:id="@+id/adminLoginFragment"
+            android:name="com.daily.nexamartpartner.features.auth.presentation.ui.AdminLoginFragment"
+            android:label="Admin Login" />
+
+        <fragment
+            android:id="@+id/createDeliveryAccountFragment"
+            android:name="com.daily.nexamartpartner.features.auth.presentation.ui.CreateDeliveryAccountFragment"
+            android:label="Create Delivery Account" />
+
         <fragment
             android:id="@+id/loginFragment"
             android:name="com.daily.nexamartpartner.features.auth.presentation.ui.LoginFragment"

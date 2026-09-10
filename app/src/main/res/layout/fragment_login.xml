@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/login_subtitle"
+                    android:text="@string/delivery_login_subtitle"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:hint="@string/identifier_label">
+                    android:hint="@string/email_label">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/identifierInputEditText"
@@ -92,6 +92,14 @@
                     android:layout_marginTop="16dp"
                     android:minHeight="52dp"
                     android:text="@string/login_button" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/createAccountButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/create_account_button" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
