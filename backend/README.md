@@ -18,7 +18,7 @@ partner service uses the shared NexaMart MySQL schema so customer-created orders
 
 ## One-time Flyway checksum repair
 
-If a deployed migration checksum no longer matches its schema-history entry, set
-`FLYWAY_REPAIR_ON_MIGRATE=true` for one deployment. After the application starts
-successfully, remove the variable so subsequent deployments validate migrations
+The known legacy V1 checksum is repaired automatically once. For any other
+intentional checksum repair, set `FLYWAY_REPAIR_ON_MIGRATE=true` for one
+deployment, then remove it so subsequent deployments validate migrations
 strictly.
