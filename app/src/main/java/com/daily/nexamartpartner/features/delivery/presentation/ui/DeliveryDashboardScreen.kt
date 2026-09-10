@@ -42,6 +42,12 @@ class DeliveryDashboardScreen : Fragment(R.layout.fragment_delivery_dashboard) {
         binding.profileButton.setOnClickListener { navigator.navigate(R.id.deliveryProfilePlaceholderFragment) }
         binding.availabilityButton.setOnClickListener { navigator.navigate(R.id.deliveryAvailabilityPlaceholderFragment) }
         binding.notificationsButton.setOnClickListener { navigator.navigate(R.id.deliveryNotificationsPlaceholderFragment) }
+        binding.assignedOrdersButton.isEnabled = true
+        binding.historyButton.isEnabled = true
+        binding.earningsButton.isEnabled = true
+        binding.profileButton.isEnabled = true
+        binding.availabilityButton.isEnabled = true
+        binding.notificationsButton.isEnabled = true
         binding.logoutButton.setOnClickListener { authViewModel.logout() }
         binding.retryButton.setOnClickListener { viewModel.retry() }
         binding.deliveryDashboardSwipeRefresh.setOnRefreshListener { viewModel.refresh() }
@@ -59,21 +65,22 @@ class DeliveryDashboardScreen : Fragment(R.layout.fragment_delivery_dashboard) {
                         DeliveryDashboardUiState.ContentState.Loading -> {
                             binding.dashboardStateCard.isVisible = false
                             binding.dashboardMessageText.text = getString(R.string.delivery_dashboard_loading)
+                            binding.availabilityText.text = getString(R.string.delivery_dashboard_availability, "--")
                             clearMetrics()
                         }
                         is DeliveryDashboardUiState.ContentState.Success -> {
                             binding.dashboardStateCard.isVisible = false
                             val d = content.dashboard
-                            binding.availabilityText.text = getString(R.string.delivery_dashboard_availability, d.availability ?: getString(R.string.unavailable))
+                            binding.availabilityText.text = getString(R.string.delivery_dashboard_availability, d.availability ?: "UNKNOWN")
                             binding.dashboardMessageText.text = if (d.hasMetrics) getString(R.string.delivery_dashboard_live_data) else getString(R.string.delivery_dashboard_no_metrics)
                             binding.activeOrdersValue.text = number(d.activeOrders)
                             binding.assignedOrdersValue.text = number(d.assignedOrders)
                             binding.pickedUpOrdersValue.text = number(d.pickedUpOrders)
                             binding.outForDeliveryValue.text = number(d.outForDeliveryOrders)
                             binding.completedTodayValue.text = number(d.completedToday)
-                            binding.todayEarningsValue.text = d.todayEarnings?.let { formatMoney(it, d.currencyCode) } ?: getString(R.string.unavailable)
+                            binding.todayEarningsValue.text = formatMoney(d.todayEarnings ?: BigDecimal.ZERO, d.currencyCode)
                         }
-                        is DeliveryDashboardUiState.ContentState.Empty -> showState(content.title, content.message, true)
+                        is DeliveryDashboardUiState.ContentState.Empty -> showEmptyState(content.title, content.message, true)
                         is DeliveryDashboardUiState.ContentState.Error -> showState(content.title, content.message, true)
                         is DeliveryDashboardUiState.ContentState.Unavailable -> showState(content.title, content.message, true)
                     }
@@ -95,10 +102,25 @@ class DeliveryDashboardScreen : Fragment(R.layout.fragment_delivery_dashboard) {
         binding.stateTitleText.text = title
         binding.stateDescriptionText.text = message
         binding.retryButton.isVisible = retry
+        binding.availabilityText.text = getString(R.string.delivery_dashboard_availability, "--")
         clearMetrics()
     }
+
+    private fun showEmptyState(title: String, message: String, retry: Boolean) {
+        binding.dashboardStateCard.isVisible = true
+        binding.stateTitleText.text = title
+        binding.stateDescriptionText.text = message
+        binding.retryButton.isVisible = retry
+        binding.availabilityText.text = getString(R.string.delivery_dashboard_availability, "--")
+        binding.activeOrdersValue.text = "0"
+        binding.assignedOrdersValue.text = "0"
+        binding.pickedUpOrdersValue.text = "0"
+        binding.outForDeliveryValue.text = "0"
+        binding.completedTodayValue.text = "0"
+        binding.todayEarningsValue.text = "0"
+    }
     private fun clearMetrics() {
-        val value = getString(R.string.unavailable)
+        val value = "--"
         binding.activeOrdersValue.text = value
         binding.assignedOrdersValue.text = value
         binding.pickedUpOrdersValue.text = value
@@ -106,7 +128,7 @@ class DeliveryDashboardScreen : Fragment(R.layout.fragment_delivery_dashboard) {
         binding.completedTodayValue.text = value
         binding.todayEarningsValue.text = value
     }
-    private fun number(value: Long?): String = value?.toString() ?: getString(R.string.unavailable)
+    private fun number(value: Long?): String = value?.toString() ?: "0"
     private fun formatMoney(value: BigDecimal, currency: String?): String = if (currency.isNullOrBlank()) value.toPlainString() else "${currency} ${value.toPlainString()}"
 
     override fun onDestroyView() { _binding = null; super.onDestroyView() }

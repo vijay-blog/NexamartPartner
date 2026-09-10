@@ -24,6 +24,17 @@ class DeliveryEarningsRepositoryImpl(private val source: DeliveryEarningsDataSou
         ))
     }
     private fun DeliveryEarningsSummaryDto.toDomain() = DeliveryEarningsSummary(currencyCode, today.dec(), thisWeek.dec(), thisMonth.dec(), completedDeliveries, pendingPayout.dec(), totalEarned.dec())
-    private fun DeliveryEarningEntryDto.toDomain() = DeliveryEarningEntry(id.orEmpty(), orderId, earnedAt, amount.dec(), currencyCode, status, description)
-    private fun String?.dec(): BigDecimal? = this?.trim()?.takeIf { it.isNotEmpty() }?.let { runCatching { BigDecimal(it) }.getOrNull() }
+    private fun DeliveryEarningEntryDto.toDomain() = DeliveryEarningEntry(id.orEmpty(), orderId.text(), earnedAt, amount.dec(), currencyCode, status, description)
+    private fun Any?.text(): String? = when (this) {
+        null -> null
+        is String -> this.trim().takeIf { it.isNotEmpty() }
+        else -> this.toString()
+    }
+    private fun Any?.dec(): BigDecimal? = when (this) {
+        null -> null
+        is BigDecimal -> this
+        is Number -> this.toString().toBigDecimalOrNull()
+        is String -> this.trim().takeIf { it.isNotEmpty() }?.toBigDecimalOrNull()
+        else -> null
+    }
 }

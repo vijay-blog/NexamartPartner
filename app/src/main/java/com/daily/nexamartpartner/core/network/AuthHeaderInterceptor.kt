@@ -14,8 +14,8 @@ class AuthHeaderInterceptor(
             return chain.proceed(original)
         }
 
-        val token = tokenProvider()
-        if (token.isNullOrBlank()) {
+        val token = tokenProvider()?.trim()
+        if (token.isNullOrEmpty()) {
             return chain.proceed(original)
         }
 

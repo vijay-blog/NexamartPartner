@@ -4,19 +4,19 @@ import com.squareup.moshi.Json
 
 data class DeliveryEarningsSummaryDto(
     @field:Json(name = "currencyCode") val currencyCode: String?,
-    @field:Json(name = "today") val today: String?,
-    @field:Json(name = "thisWeek") val thisWeek: String?,
-    @field:Json(name = "thisMonth") val thisMonth: String?,
+    @field:Json(name = "today") val today: Any?,
+    @field:Json(name = "thisWeek") val thisWeek: Any?,
+    @field:Json(name = "thisMonth") val thisMonth: Any?,
     @field:Json(name = "completedDeliveries") val completedDeliveries: Long?,
-    @field:Json(name = "pendingPayout") val pendingPayout: String?,
-    @field:Json(name = "totalEarned") val totalEarned: String?
+    @field:Json(name = "pendingPayout") val pendingPayout: Any?,
+    @field:Json(name = "totalEarned") val totalEarned: Any?
 )
 
 data class DeliveryEarningEntryDto(
     @field:Json(name = "id") val id: String?,
-    @field:Json(name = "orderId") val orderId: String?,
+    @field:Json(name = "orderId") val orderId: Any?,
     @field:Json(name = "earnedAt") val earnedAt: String?,
-    @field:Json(name = "amount") val amount: String?,
+    @field:Json(name = "amount") val amount: Any?,
     @field:Json(name = "currencyCode") val currencyCode: String?,
     @field:Json(name = "status") val status: String?,
     @field:Json(name = "description") val description: String?

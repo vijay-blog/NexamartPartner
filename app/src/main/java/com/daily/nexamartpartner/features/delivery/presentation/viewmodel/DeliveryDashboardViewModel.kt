@@ -53,9 +53,16 @@ class DeliveryDashboardViewModel(
                 }
                 is AppResult.Failure -> {
                     if (result.error.type == FailureType.UNAUTHORIZED) _events.tryEmit(Event.SessionExpired)
-                    val content = if (result.error.type == FailureType.CONTRACT_MISSING) {
-                        DeliveryDashboardUiState.ContentState.Unavailable("Dashboard data unavailable", result.error.message)
-                    } else DeliveryDashboardUiState.ContentState.Error("Unable to load dashboard", "Please try again.")
+                    val content = when (result.error.type) {
+                        FailureType.CONTRACT_MISSING -> DeliveryDashboardUiState.ContentState.Unavailable("Dashboard data unavailable", result.error.message)
+                        FailureType.UNAUTHORIZED -> DeliveryDashboardUiState.ContentState.Error("Session expired", "Please login again.")
+                        FailureType.FORBIDDEN -> DeliveryDashboardUiState.ContentState.Error("Access denied", "You don't have permission to access this feature.")
+                        FailureType.NETWORK -> DeliveryDashboardUiState.ContentState.Error("Unable to connect", "Please check your internet connection.")
+                        FailureType.SERVER -> DeliveryDashboardUiState.ContentState.Error("Server error", "Please try again.")
+                        FailureType.NOT_FOUND -> DeliveryDashboardUiState.ContentState.Error("Dashboard not found", "The dashboard endpoint is not available.")
+                        FailureType.VALIDATION, FailureType.CONFLICT, FailureType.TRANSIENT, FailureType.UNKNOWN, FailureType.UNSUPPORTED_ROLE ->
+                            DeliveryDashboardUiState.ContentState.Error("Unable to load dashboard", result.error.message)
+                    }
                     _uiState.update { it.copy(isRefreshing = false, content = content) }
                 }
             }
