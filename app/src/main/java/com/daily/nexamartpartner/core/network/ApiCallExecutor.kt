@@ -3,6 +3,7 @@ package com.daily.nexamartpartner.core.network
 import com.daily.nexamartpartner.core.result.AppFailure
 import com.daily.nexamartpartner.core.result.AppResult
 import com.daily.nexamartpartner.core.result.FailureType
+import android.util.Log
 import java.io.IOException
 import java.net.SocketTimeoutException
 import retrofit2.Response
@@ -12,6 +13,7 @@ import retrofit2.Response
  * It deliberately does not retry writes: callers can retry safe reads explicitly.
  */
 class ApiCallExecutor {
+    private companion object { const val TAG = "ApiCallExecutor" }
     suspend fun <T> execute(call: suspend () -> Response<T>): AppResult<T> {
         return try {
             val response = call()
@@ -68,6 +70,10 @@ class ApiCallExecutor {
                 )
             )
         } catch (throwable: Throwable) {
+            // Keep technical details out of the UI, but log the exception in debug builds
+            // so JSON/Retrofit contract errors can be diagnosed instead of becoming a
+            // completely opaque "Something unexpected happened" failure.
+            Log.e(TAG, "Unexpected API failure: ${throwable::class.java.simpleName}: ${throwable.message}", throwable)
             AppResult.Failure(
                 AppFailure(
                     message = "Something unexpected happened. Please try again.",
