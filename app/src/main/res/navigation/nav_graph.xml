@@ -15,7 +15,7 @@
         <fragment
             android:id="@+id/authHomeFragment"
             android:name="com.daily.nexamartpartner.features.auth.presentation.ui.AuthHomeFragment"
-            android:label="NexaMart Access" />
+            android:label="VJoyKart Access" />
 
         <fragment
             android:id="@+id/adminLoginFragment"

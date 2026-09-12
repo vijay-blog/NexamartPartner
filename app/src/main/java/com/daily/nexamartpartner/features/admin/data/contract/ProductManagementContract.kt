@@ -6,9 +6,8 @@ import com.daily.nexamartpartner.features.admin.domain.model.ProductsQuery
 
 /**
  * Isolates every backend-dependent path/query-key/body-key decision for product management.
- * No Java/Spring backend source exists in this repository, so this contract cannot be
- * confirmed here. [PendingBackendProductManagementContract] is the only implementation and
- * intentionally returns null everywhere so no guessed request is ever sent.
+ * The active production implementation is [ActiveProductManagementContract].
+ * The pending implementation remains available for isolated contract tests.
  */
 interface ProductManagementContract {
     val listProductsPath: String?

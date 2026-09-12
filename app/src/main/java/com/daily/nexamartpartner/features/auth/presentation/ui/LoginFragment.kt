@@ -6,14 +6,10 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daily.nexamartpartner.R
 import com.daily.nexamartpartner.databinding.FragmentLoginBinding
-import com.daily.nexamartpartner.features.auth.local.LocalCredentialStore
-import com.daily.nexamartpartner.features.auth.domain.model.UserRole
-import com.daily.nexamartpartner.features.auth.domain.model.UserSession
 import com.daily.nexamartpartner.di.appContainer
 import com.daily.nexamartpartner.features.auth.presentation.viewmodel.LoginViewModel
 import com.daily.nexamartpartner.features.auth.presentation.viewmodel.LoginViewModelFactory
@@ -23,8 +19,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private var _binding: FragmentLoginBinding? = null
     private val binding: FragmentLoginBinding
         get() = requireNotNull(_binding)
-
-    private lateinit var localCredentialStore: LocalCredentialStore
 
     private val loginViewModel: LoginViewModel by viewModels {
         LoginViewModelFactory(
@@ -36,7 +30,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentLoginBinding.bind(view)
-        localCredentialStore = LocalCredentialStore(requireContext())
         bindListeners()
         arguments?.getString("prefillEmail")?.takeIf { it.isNotBlank() }?.let {
             binding.identifierInputEditText.setText(it)
@@ -60,31 +53,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun submitLogin() {
-        val email = binding.identifierInputEditText.text?.toString()?.trim().orEmpty()
-        val password = binding.passwordInputEditText.text?.toString().orEmpty()
-        if (email.isBlank() || password.isBlank()) {
-            loginViewModel.submitLogin()
-            return
-        }
-        binding.loginButton.isEnabled = false
-        viewLifecycleOwner.lifecycleScope.launch {
-            val localAccount = localCredentialStore.authenticateDelivery(email, password.toCharArray())
-            if (localAccount != null) {
-                val session = UserSession(
-                    accessToken = "local-delivery-session",
-                    refreshToken = "local-delivery-refresh",
-                    userId = 2L,
-                    name = localAccount.name,
-                    contact = localAccount.email,
-                    role = UserRole.DELIVERY_PARTNER
-                )
-                requireContext().appContainer.sessionManager.saveSession(session)
-                requireContext().appContainer.authStateStore.setAuthenticated(session)
-                return@launch
-            }
-            // Keep the real backend login path available when its contract is configured.
-            loginViewModel.submitLogin()
-        }
+        loginViewModel.submitLogin()
     }
 
     private fun collectState() {

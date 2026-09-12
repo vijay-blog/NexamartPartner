@@ -15,6 +15,7 @@ class PendingBackendAdminOrdersContract : AdminOrdersContract {
     override fun buildUpdateStatusBody(status: OrderStatus): Map<String, String>? = null
 
     override fun buildCancelOrderBody(reason: String?): Map<String, String>? = null
+    override fun buildAssignDeliveryBody(deliveryPartnerId: String): Map<String, String>? = null
 
     override fun resolvePath(template: String?, orderId: String): String? = null
 }

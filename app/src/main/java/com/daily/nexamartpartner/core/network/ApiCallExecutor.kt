@@ -16,6 +16,10 @@ class ApiCallExecutor {
         return try {
             val response = call()
             if (response.isSuccessful) {
+                if (response.code() == 204) {
+                    @Suppress("UNCHECKED_CAST")
+                    return AppResult.Success(Unit as T)
+                }
                 val body = response.body()
                 if (body != null) {
                     AppResult.Success(body)

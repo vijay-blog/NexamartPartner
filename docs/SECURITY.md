@@ -7,7 +7,7 @@
 - Cleartext HTTP traffic is explicitly disabled.
 - Network trust is restricted to system certificate authorities; no user-added CA trust is enabled by the app.
 - Release builds disable network logging. Debug network logging is BASIC only and must never be expanded to headers/bodies containing credentials or customer data.
-- The main activity uses `FLAG_SECURE` to reduce accidental screenshot/screen-recording exposure of orders, addresses, customer data and earnings.
+- Screenshots are intentionally allowed for the Partner app because store-review/support workflows require them. Sensitive order/customer data should not be exposed outside the app through sharing or external intents.
 - No credentials, access tokens, refresh tokens, OTPs or passwords are written to application logs.
 - Only the launcher activity is exported; no unnecessary exported services/receivers/providers are declared.
 - Delivery/admin authorization remains enforced by the authenticated role and navigation guard; UI visibility is not treated as authorization.

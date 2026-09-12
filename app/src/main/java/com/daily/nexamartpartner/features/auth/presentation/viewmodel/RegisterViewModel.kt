@@ -51,7 +51,12 @@ class RegisterViewModel(
         }
         _uiState.update { it.copy(isSubmitting = true, formError = null, successMessage = null) }
         viewModelScope.launch {
-            when (val result = registerUseCase(RegistrationData(current.name.trim(), current.email.trim().lowercase(), current.password))) {
+            when (val result = registerUseCase(RegistrationData(
+                    name = current.name.trim(),
+                    email = current.email.trim().lowercase(),
+                    password = current.password,
+                    confirmPassword = current.confirmPassword
+                ))) {
                 is AppResult.Success -> {
                     _uiState.update { it.copy(isSubmitting = false, formError = null, successMessage = "Account created successfully. Please sign in with your email and password.") }
                 }

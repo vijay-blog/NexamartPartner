@@ -15,6 +15,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.QueryMap
 import retrofit2.http.Url
 
@@ -34,7 +35,7 @@ interface CategoryManagementApi {
         @Body body: Map<String, String>
     ): Response<CategoryDto>
 
-    @PATCH
+    @PUT
     suspend fun update(
         @Url path: String,
         @Body body: Map<String, String>

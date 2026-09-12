@@ -5,12 +5,14 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.daily.nexamartpartner.R
-import com.daily.nexamartpartner.databinding.FragmentAdminLoginBinding
+import com.daily.nexamartpartner.core.result.AppResult
 import com.daily.nexamartpartner.di.appContainer
+import com.daily.nexamartpartner.databinding.FragmentAdminLoginBinding
+import com.daily.nexamartpartner.features.auth.domain.model.LoginCredentials
 import com.daily.nexamartpartner.features.auth.domain.model.UserRole
-import com.daily.nexamartpartner.features.auth.domain.model.UserSession
 import kotlinx.coroutines.launch
 
+/** Production admin login. Credentials are validated by the backend; no hardcoded credentials or local fake tokens. */
 class AdminLoginFragment : Fragment(R.layout.fragment_admin_login) {
     private var _binding: FragmentAdminLoginBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -31,37 +33,32 @@ class AdminLoginFragment : Fragment(R.layout.fragment_admin_login) {
             binding.adminErrorText.visibility = View.VISIBLE
             return
         }
-        if (username != ADMIN_USERNAME || password != ADMIN_PASSWORD) {
-            binding.adminErrorText.text = getString(R.string.admin_invalid_credentials)
-            binding.adminErrorText.visibility = View.VISIBLE
-            return
-        }
-        val session = UserSession(
-            accessToken = LOCAL_ADMIN_ACCESS_TOKEN,
-            refreshToken = LOCAL_ADMIN_REFRESH_TOKEN,
-            userId = ADMIN_USER_ID,
-            name = "Admin",
-            contact = ADMIN_USERNAME,
-            role = UserRole.ADMIN
-        )
+
         binding.adminSignInButton.isEnabled = false
         lifecycleScope.launch {
-            requireContext().appContainer.sessionManager.saveSession(session)
-            requireContext().appContainer.authStateStore.setAuthenticated(session)
+            when (val result = requireContext().appContainer.loginUseCase(LoginCredentials(username, password))) {
+                is AppResult.Success -> {
+                    if (result.data.role == UserRole.ADMIN) {
+                        requireContext().appContainer.authStateStore.setAuthenticated(result.data)
+                    } else {
+                        // loginUseCase persists the session; clear it before showing the role error.
+                        requireContext().appContainer.logoutUseCase()
+                        showError(getString(R.string.admin_access_required))
+                    }
+                }
+                is AppResult.Failure -> showError(result.error.message)
+            }
+            if (_binding != null) binding.adminSignInButton.isEnabled = true
         }
+    }
+
+    private fun showError(message: String) {
+        binding.adminErrorText.text = message.ifBlank { getString(R.string.admin_invalid_credentials) }
+        binding.adminErrorText.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    companion object {
-        // Requested bootstrap credentials. Replace with server authentication before production release.
-        const val ADMIN_USERNAME = "admin"
-        const val ADMIN_PASSWORD = "admin@223"
-        private const val ADMIN_USER_ID = 1L
-        private const val LOCAL_ADMIN_ACCESS_TOKEN = "local-admin-session"
-        private const val LOCAL_ADMIN_REFRESH_TOKEN = "local-admin-refresh"
     }
 }

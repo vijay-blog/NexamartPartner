@@ -27,6 +27,12 @@ interface AdminOrdersApi {
     ): Response<Unit>
 
     @POST
+    suspend fun assignDelivery(
+        @Url endpointPath: String,
+        @Body body: Map<String, String>
+    ): Response<Unit>
+
+    @POST
     suspend fun cancelOrder(
         @Url endpointPath: String,
         @Body body: Map<String, String>

@@ -16,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.QueryMap
 import retrofit2.http.Url
 
@@ -38,7 +39,7 @@ interface ProductManagementApi {
         @Body body: Map<String, String>
     ): Response<ProductDetailsDto>
 
-    @PATCH
+    @PUT
     suspend fun updateProduct(
         @Url path: String,
         @Body body: Map<String, String>

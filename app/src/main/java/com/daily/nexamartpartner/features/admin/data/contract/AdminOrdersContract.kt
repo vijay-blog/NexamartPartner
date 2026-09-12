@@ -13,5 +13,6 @@ interface AdminOrdersContract {
     fun buildOrderListQuery(query: AdminOrdersQuery): Map<String, String>?
     fun buildUpdateStatusBody(status: OrderStatus): Map<String, String>?
     fun buildCancelOrderBody(reason: String?): Map<String, String>?
+    fun buildAssignDeliveryBody(deliveryPartnerId: String): Map<String, String>?
     fun resolvePath(template: String?, orderId: String): String?
 }

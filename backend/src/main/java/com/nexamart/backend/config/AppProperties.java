@@ -8,7 +8,7 @@ public class AppProperties {
   private long accessTokenMinutes = 60;
   private long refreshTokenDays = 30;
   private String adminUsername = "admin";
-  private String adminPassword = "admin@223";
+  private String adminPassword;
   private String adminEmail = "admin@nexamart.local";
   private String adminName = "NexaMart Admin";
   public String getJwtSecret(){return jwtSecret;} public void setJwtSecret(String v){jwtSecret=v;}
