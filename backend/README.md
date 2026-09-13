@@ -3,10 +3,14 @@
 Spring Boot 3.3 / Java 17 service for Railway.
 
 ## Railway service settings
-- Root Directory: partner-backend
-- Build: Dockerfile
+- Root Directory: repository root
+- Config file: /railway.toml
+- Build: /Dockerfile (builds only the `backend` Maven module)
 - Healthcheck: /api/v1/health
 - Port: Railway PORT environment variable
+
+The health response includes Railway's non-secret Git commit SHA. Confirm it
+matches the deployed commit before treating a source fix as deployed.
 
 ## Required variables
 - DB_URL

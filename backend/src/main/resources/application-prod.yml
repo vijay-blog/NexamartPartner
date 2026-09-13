@@ -26,6 +26,7 @@ server:
   port: ${PORT:8080}
 
 nexamart:
+  build-commit: ${RAILWAY_GIT_COMMIT_SHA:unknown}
   jwt-secret: ${JWT_SECRET}
   access-token-minutes: ${ACCESS_TOKEN_MINUTES:60}
   refresh-token-days: ${REFRESH_TOKEN_DAYS:30}

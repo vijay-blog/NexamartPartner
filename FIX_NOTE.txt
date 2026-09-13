@@ -1,0 +1,8 @@
+Root cause from Logcat:
+MoshiConverterFactory.create() used the default Moshi instance without KotlinJsonAdapterFactory.
+Retrofit failed while creating a converter for LoginResponseDto.
+
+Fix:
+- Add moshi-kotlin 1.15.2.
+- Build Moshi with KotlinJsonAdapterFactory.
+- Pass that Moshi instance to MoshiConverterFactory.

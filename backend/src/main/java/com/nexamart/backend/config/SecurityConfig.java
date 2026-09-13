@@ -9,21 +9,28 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableMethodSecurity
 @EnableConfigurationProperties(AppProperties.class)
 public class SecurityConfig {
   @Bean PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder(12);}
+  @Bean AuthenticationEntryPoint authenticationEntryPoint(){return (request,response,exception)->response.sendError(401);}
+  @Bean AccessDeniedHandler accessDeniedHandler(){return (request,response,exception)->response.sendError(403);}
   @Bean SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwt) throws Exception {
     http.csrf(c->c.disable()).cors(c->{}).sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(a->a
-        .requestMatchers("/api/v1/health","/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/admin/login","/api/v1/auth/refresh","/api/v1/catalog/**").permitAll()
+        .requestMatchers(HttpMethod.GET,"/api/v1/health","/api/v1/catalog/**").permitAll()
+        .requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/register","/api/v1/auth/admin/login","/api/v1/auth/refresh").permitAll()
         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
         .requestMatchers("/api/v1/delivery/**").hasRole("DELIVERY_PARTNER")
         .anyRequest().authenticated())
+      .exceptionHandling(e->e.authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler()))
       .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
