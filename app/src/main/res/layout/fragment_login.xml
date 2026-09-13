@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:hint="@string/email_label">
+                    android:hint="@string/identifier_label">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/identifierInputEditText"
@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/cd_identifier_input"
                         android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress|textNoSuggestions"
+                        android:inputType="text|textNoSuggestions"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
 

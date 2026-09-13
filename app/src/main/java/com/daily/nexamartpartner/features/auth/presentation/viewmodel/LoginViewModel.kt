@@ -56,7 +56,7 @@ class LoginViewModel(
         var identifierError: String? = null
         var passwordError: String? = null
         if (current.identifier.isBlank()) {
-            identifierError = "Please enter your email address or username."
+            identifierError = "Please enter your mobile number or email."
         }
         if (current.password.isBlank()) {
             passwordError = "Please enter your password."

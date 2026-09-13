@@ -30,10 +30,20 @@ class ProductionContractTest {
     @Test
     fun registrationIncludesConfirmPassword() {
         val request = ActiveRegistrationRequestContract().buildRegistrationRequest(
-            RegistrationData("Partner", "partner@example.com", "password123", "password123")
+            RegistrationData("Partner", "partner@example.com", "9876543210", "password123", "password123")
         )
         assertEquals("auth/register", request.endpoint)
+        assertEquals("9876543210", request.body["phone"])
         assertEquals("password123", request.body["confirmPassword"])
+    }
+
+
+    @Test
+    fun registrationIncludesPhone() {
+        val request = ActiveRegistrationRequestContract().buildRegistrationRequest(
+            RegistrationData("Partner", "partner@example.com", "9876543210", "password123", "password123")
+        )
+        assertEquals("9876543210", request.body["phone"])
     }
 
     @Test

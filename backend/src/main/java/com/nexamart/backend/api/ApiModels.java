@@ -2,7 +2,7 @@ package com.nexamart.backend.api;
 import com.nexamart.backend.domain.*;import jakarta.validation.constraints.*;import java.math.BigDecimal;import java.time.Instant;import java.util.*;
 public final class ApiModels{private ApiModels(){}
  public record LoginRequest(@NotBlank String identifier,@NotBlank String password){}
- public record RegisterRequest(@NotBlank String name,@Email @NotBlank String email,@NotBlank String phone,@NotBlank @Size(min=8,max=100) String password,@NotBlank String confirmPassword){}
+ public record RegisterRequest(@NotBlank String name,@Email @NotBlank String email,@NotBlank @Pattern(regexp="^(?:\\+91[- ]?)?[6-9][0-9]{9}$", message="Please enter a valid 10-digit Indian mobile number.") String phone,@NotBlank @Size(min=8,max=100) String password,@NotBlank String confirmPassword){}
  public record RefreshRequest(@NotBlank String refreshToken){}
  public record UserResponse(Long id,String name,String phone,String email,String role){}
  public record LoginResponse(String accessToken,String refreshToken,UserResponse user){}

@@ -27,28 +27,32 @@ class CreateDeliveryAccountFragment : Fragment(R.layout.fragment_create_delivery
     private fun createAccount() {
         binding.createAccountErrorText.visibility = View.GONE
         val name = binding.createNameInput.text?.toString()?.trim().orEmpty()
+        val phone = normalizePhone(binding.createPhoneInput.text?.toString().orEmpty())
         val email = binding.createEmailInput.text?.toString()?.trim().orEmpty()
         val password = binding.createPasswordInput.text?.toString().orEmpty()
         val confirm = binding.createConfirmPasswordInput.text?.toString().orEmpty()
 
         when {
             name.length < 2 -> showError(getString(R.string.create_account_name_error))
+            !PHONE_REGEX.matches(phone) -> showError(getString(R.string.create_account_phone_error))
             !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> showError(getString(R.string.create_account_email_error))
             password.length < 8 -> showError(getString(R.string.create_account_password_error))
             password != confirm -> showError(getString(R.string.create_account_confirm_error))
-            else -> submit(name, email, password, confirm)
+            else -> submit(name, phone, email, password, confirm)
         }
     }
 
-    private fun submit(name: String, email: String, password: String, confirm: String) {
+    private fun submit(name: String, phone: String, email: String, password: String, confirm: String) {
         binding.createAccountButton.isEnabled = false
         binding.createAccountButton.text = getString(R.string.create_account_creating)
         viewLifecycleOwner.lifecycleScope.launch {
             when (val result = requireContext().appContainer.registerUseCase(
-                RegistrationData(name, email.lowercase(), password, confirm)
+                RegistrationData(name, email.lowercase(), phone, password, confirm)
             )) {
                 is AppResult.Success -> {
-                    val args = Bundle().apply { putString("prefillEmail", email) }
+                    val args = Bundle().apply {
+                        putString("prefillIdentifier", phone)
+                    }
                     findNavController().navigate(R.id.loginFragment, args, null)
                 }
                 is AppResult.Failure -> {
@@ -60,6 +64,13 @@ class CreateDeliveryAccountFragment : Fragment(R.layout.fragment_create_delivery
         }
     }
 
+    private fun normalizePhone(value: String): String {
+        var phone = value.trim().replace(" ", "").replace("-", "")
+        if (phone.startsWith("+91")) phone = phone.removePrefix("+91")
+        else if (phone.startsWith("0091")) phone = phone.removePrefix("0091")
+        return phone
+    }
+
     private fun showError(message: String) {
         binding.createAccountErrorText.text = message.ifBlank { getString(R.string.create_account_failed) }
         binding.createAccountErrorText.visibility = View.VISIBLE
@@ -68,5 +79,9 @@ class CreateDeliveryAccountFragment : Fragment(R.layout.fragment_create_delivery
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        private val PHONE_REGEX = Regex("^[6-9]\\d{9}$")
     }
 }

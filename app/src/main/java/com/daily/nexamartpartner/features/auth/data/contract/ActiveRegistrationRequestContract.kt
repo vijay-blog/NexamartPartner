@@ -8,6 +8,7 @@ class ActiveRegistrationRequestContract : RegistrationRequestContract {
         body = mapOf(
             "name" to data.name.trim(),
             "email" to data.email.trim().lowercase(),
+            "phone" to data.phone.trim(),
             "password" to data.password,
             "confirmPassword" to data.confirmPassword
         )

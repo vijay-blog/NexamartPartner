@@ -27,6 +27,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
         binding.nameInputEditText.doAfterTextChanged { viewModel.onNameChanged(it?.toString().orEmpty()) }
+        binding.phoneInputEditText.doAfterTextChanged { viewModel.onPhoneChanged(it?.toString().orEmpty()) }
         binding.emailInputEditText.doAfterTextChanged { viewModel.onEmailChanged(it?.toString().orEmpty()) }
         binding.passwordInputEditText.doAfterTextChanged { viewModel.onPasswordChanged(it?.toString().orEmpty()) }
         binding.confirmPasswordInputEditText.doAfterTextChanged { viewModel.onConfirmPasswordChanged(it?.toString().orEmpty()) }
@@ -37,6 +38,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 viewModel.uiState.collect { state ->
                     binding.nameInputLayout.error = state.nameError
                     binding.emailInputLayout.error = state.emailError
+                    binding.phoneInputLayout.error = state.phoneError
                     binding.passwordInputLayout.error = state.passwordError
                     binding.confirmPasswordInputLayout.error = state.confirmPasswordError
                     binding.registerButton.isEnabled = !state.isSubmitting

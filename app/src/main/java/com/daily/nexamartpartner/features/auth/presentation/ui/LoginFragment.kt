@@ -32,7 +32,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentLoginBinding.bind(view)
         bindListeners()
-        arguments?.getString("prefillEmail")?.takeIf { it.isNotBlank() }?.let {
+        ((arguments?.getString("prefillIdentifier") ?: arguments?.getString("prefillEmail"))?.takeIf { it.isNotBlank() })?.let {
             binding.identifierInputEditText.setText(it)
         }
         collectState()
