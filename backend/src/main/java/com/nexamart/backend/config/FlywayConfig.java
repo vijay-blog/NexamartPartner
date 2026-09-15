@@ -19,7 +19,10 @@ public class FlywayConfig {
   @Bean
   FlywayMigrationStrategy flywayMigrationStrategy() {
     return flyway -> {
-      if (hasFailedV9(flyway.getConfiguration().getDataSource())) {
+      if (Boolean.parseBoolean(System.getenv().getOrDefault("FLYWAY_REPAIR_ON_STARTUP", "false"))) {
+        logger.warn("FLYWAY_REPAIR_ON_STARTUP=true: repairing Flyway history before migration");
+        flyway.repair();
+      } else if (hasFailedV9(flyway.getConfiguration().getDataSource())) {
         logger.warn("Repairing failed partner migration V9 before retry");
         flyway.repair();
       }
@@ -30,15 +33,10 @@ public class FlywayConfig {
   private boolean hasFailedV9(DataSource dataSource) {
     try (Connection connection = dataSource.getConnection()) {
       DatabaseMetaData metadata = connection.getMetaData();
-      try (ResultSet tables =
-          metadata.getTables(connection.getCatalog(), null, HISTORY_TABLE, new String[] {"TABLE"})) {
-        if (!tables.next()) {
-          return false;
-        }
+      try (ResultSet tables = metadata.getTables(connection.getCatalog(), null, HISTORY_TABLE, new String[] {"TABLE"})) {
+        if (!tables.next()) return false;
       }
-      try (var statement =
-          connection.prepareStatement(
-              "SELECT success FROM " + HISTORY_TABLE + " WHERE version = ?")) {
+      try (var statement = connection.prepareStatement("SELECT success FROM " + HISTORY_TABLE + " WHERE version = ?")) {
         statement.setString(1, "9");
         try (ResultSet result = statement.executeQuery()) {
           return result.next() && !result.getBoolean("success");

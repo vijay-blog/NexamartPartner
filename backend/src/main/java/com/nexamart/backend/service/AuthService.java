@@ -44,30 +44,11 @@ import com.nexamart.backend.api.ApiModels.*;import com.nexamart.backend.config.A
   return phone;
  }
  public void ensureAdmin(){
-  String username=props.getAdminUsername()==null?"":props.getAdminUsername().trim();
-  String password=props.getAdminPassword();
-  if(username.isBlank()) throw new IllegalStateException("ADMIN_USERNAME must not be blank.");
-  if(password==null || password.isBlank()) throw new IllegalStateException("ADMIN_PASSWORD is missing. Set ADMIN_PASSWORD in Railway environment variables.");
-
-  UserAccount admin=users.findByUsernameIgnoreCase(username).orElse(null);
-  if(admin==null){
-    UserAccount a=new UserAccount();
-    a.setName(props.getAdminName());
-    a.setUsername(username);
-    a.setEmail(props.getAdminEmail());
-    a.setPasswordHash(encoder.encode(password));
-    a.setRole(Role.ADMIN);
-    a.setStatus(AccountStatus.ACTIVE);
-    users.saveAndFlush(a);
-    return;
-  }
-
-  // The bootstrap admin is environment-managed. Keep its password aligned with
-  // ADMIN_PASSWORD so a changed Railway secret actually takes effect.
-  boolean changed=false;
-  if(admin.getRole()!=Role.ADMIN){admin.setRole(Role.ADMIN);changed=true;}
-  if(admin.getStatus()!=AccountStatus.ACTIVE){admin.setStatus(AccountStatus.ACTIVE);changed=true;}
-  if(!encoder.matches(password,admin.getPasswordHash())){admin.setPasswordHash(encoder.encode(password));changed=true;}
-  if(changed) users.saveAndFlush(admin);
+  if(props.getAdminUsername()==null || props.getAdminUsername().isBlank()) throw new IllegalStateException("ADMIN_USERNAME is missing.");
+  if(props.getAdminPassword()==null || props.getAdminPassword().isBlank()) throw new IllegalStateException("ADMIN_PASSWORD is missing.");
+  UserAccount a=users.findByUsernameIgnoreCase(props.getAdminUsername()).orElseGet(()->{UserAccount n=new UserAccount();n.setUsername(props.getAdminUsername());return n;});
+  a.setName(props.getAdminName()); a.setEmail(props.getAdminEmail()); a.setRole(Role.ADMIN); a.setStatus(AccountStatus.ACTIVE);
+  if(a.getPasswordHash()==null || !encoder.matches(props.getAdminPassword(),a.getPasswordHash())) a.setPasswordHash(encoder.encode(props.getAdminPassword()));
+  users.save(a);
  }
 }
