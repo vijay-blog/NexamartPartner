@@ -5,7 +5,7 @@ public final class ApiModels{private ApiModels(){}
  public record RegisterRequest(@NotBlank String name,@Email @NotBlank String email,@NotBlank @Pattern(regexp="^(?:\\+91[- ]?)?[6-9][0-9]{9}$", message="Please enter a valid 10-digit Indian mobile number.") String phone,@NotBlank @Size(min=8,max=100) String password,@NotBlank String confirmPassword){}
  public record RefreshRequest(@NotBlank String refreshToken){}
  public record UserResponse(Long id,String name,String phone,String email,String role){}
- public record LoginResponse(String accessToken,String refreshToken,UserResponse user){}
+ public record LoginResponse(String accessToken,String refreshToken,UserResponse user){} public record RegistrationResponse(String message){}
  public record ActionRequest(@NotBlank String action,String reason){}
  public record OrderStatusRequest(@NotBlank String status){}
  public record CancelRequest(String reason){}

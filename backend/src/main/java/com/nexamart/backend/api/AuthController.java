@@ -22,7 +22,7 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public LoginResponse registerDeliveryPartner(@Valid @RequestBody RegisterRequest request) {
+  public RegistrationResponse registerDeliveryPartner(@Valid @RequestBody RegisterRequest request) {
     return auth.register(request);
   }
 

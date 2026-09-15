@@ -1,6 +1,7 @@
 package com.nexamart.backend.service;
 
 import com.nexamart.backend.api.ApiModels.RegisterRequest;
+import com.nexamart.backend.api.ApiModels.RegistrationResponse;
 import com.nexamart.backend.config.AppProperties;
 import com.nexamart.backend.domain.AccountStatus;
 import com.nexamart.backend.domain.DeliveryPartnerProfile;
@@ -40,6 +41,8 @@ class AuthServiceTest {
     when(jwt.accessToken(any(), any(), any())).thenReturn("access-token");
     when(jwt.refreshToken(any(), any(), any())).thenReturn("refresh-token");
     when(users.save(any(UserAccount.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(users.saveAndFlush(any(UserAccount.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(profiles.saveAndFlush(any(DeliveryPartnerProfile.class))).thenAnswer(invocation -> invocation.getArgument(0));
     service = new AuthService(users, encoder, jwt, mock(AppProperties.class), profiles);
   }
 
@@ -50,7 +53,7 @@ class AuthServiceTest {
     var response = service.register(request);
 
     var userCaptor = org.mockito.ArgumentCaptor.forClass(UserAccount.class);
-    verify(users).save(userCaptor.capture());
+    verify(users).saveAndFlush(userCaptor.capture());
     UserAccount user = userCaptor.getValue();
     assertEquals(Role.DELIVERY_PARTNER, user.getRole());
     assertEquals(AccountStatus.ACTIVE, user.getStatus());
@@ -58,11 +61,9 @@ class AuthServiceTest {
     assertTrue(encoder.matches(request.password(), user.getPasswordHash()));
 
     var profileCaptor = org.mockito.ArgumentCaptor.forClass(DeliveryPartnerProfile.class);
-    verify(profiles).save(profileCaptor.capture());
+    verify(profiles).saveAndFlush(profileCaptor.capture());
     assertEquals(user, profileCaptor.getValue().getUser());
-    assertEquals("access-token", response.accessToken());
-    assertEquals("refresh-token", response.refreshToken());
-    assertEquals("DELIVERY_PARTNER", response.user().role());
+    assertEquals("Delivery partner account created successfully.", response.message());
   }
 
   @Test

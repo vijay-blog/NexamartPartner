@@ -7,11 +7,32 @@ import com.nexamart.backend.api.ApiModels.*;import com.nexamart.backend.config.A
     .or(()->users.findByUsernameIgnoreCase(identifier))
     .or(()->users.findByPhone(normalizedPhone))
     .orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"Invalid login details. Please try again."));if(u.getStatus()!=AccountStatus.ACTIVE)throw new ApiException(HttpStatus.FORBIDDEN,"Account is not active.");if(!encoder.matches(r.password(),u.getPasswordHash()))throw new ApiException(HttpStatus.UNAUTHORIZED,"Invalid login details. Please try again.");u.setLastActiveAt(Instant.now());users.save(u);return tokens(u);}
- @Transactional public LoginResponse register(RegisterRequest r){ return registerWithRole(r, Role.DELIVERY_PARTNER); }
- @Transactional public LoginResponse registerCustomer(RegisterRequest r){ return registerWithRole(r, Role.CUSTOMER); }
- private LoginResponse registerWithRole(RegisterRequest r, Role role){if(!r.password().equals(r.confirmPassword()))throw new ApiException(HttpStatus.BAD_REQUEST,"Passwords do not match.");if(users.existsByEmailIgnoreCase(r.email()))throw new ApiException(HttpStatus.CONFLICT,"Email is already registered.");UserAccount u=new UserAccount();u.setName(r.name().trim());u.setEmail(r.email().trim().toLowerCase());String phone=normalizePhone(r.phone());
-  if(users.existsByPhone(phone))throw new ApiException(HttpStatus.CONFLICT,"Mobile number is already registered.");
-  u.setPhone(phone);u.setPasswordHash(encoder.encode(r.password()));u.setRole(role);u.setStatus(AccountStatus.ACTIVE);u=users.save(u);if(role==Role.DELIVERY_PARTNER){var profile=new com.nexamart.backend.domain.DeliveryPartnerProfile();profile.setUser(u);profiles.save(profile);}return tokens(u);}
+ @Transactional public RegistrationResponse register(RegisterRequest r){ return registerWithRole(r, Role.DELIVERY_PARTNER); }
+ @Transactional public RegistrationResponse registerCustomer(RegisterRequest r){ return registerWithRole(r, Role.CUSTOMER); }
+ private RegistrationResponse registerWithRole(RegisterRequest r, Role role){
+  String email = r.email().trim().toLowerCase();
+  String phone = normalizePhone(r.phone());
+  if(!r.password().equals(r.confirmPassword())) throw new ApiException(HttpStatus.BAD_REQUEST,"Passwords do not match.");
+  if(!phone.matches("[6-9]\\d{9}")) throw new ApiException(HttpStatus.BAD_REQUEST,"Please enter a valid 10-digit Indian mobile number.");
+  if(users.existsByEmailIgnoreCase(email)) throw new ApiException(HttpStatus.CONFLICT,"Email is already registered.");
+  if(users.existsByPhone(phone)) throw new ApiException(HttpStatus.CONFLICT,"Mobile number is already registered.");
+
+  UserAccount u=new UserAccount();
+  u.setName(r.name().trim());
+  u.setEmail(email);
+  u.setPhone(phone);
+  u.setPasswordHash(encoder.encode(r.password()));
+  u.setRole(role);
+  u.setStatus(AccountStatus.ACTIVE);
+  u=users.saveAndFlush(u);
+
+  if(role==Role.DELIVERY_PARTNER){
+    var profile=new com.nexamart.backend.domain.DeliveryPartnerProfile();
+    profile.setUser(u);
+    profiles.saveAndFlush(profile);
+  }
+  return new RegistrationResponse("Delivery partner account created successfully.");
+}
  public LoginResponse refresh(RefreshRequest r){if(!jwt.validRefresh(r.refreshToken()))throw new ApiException(HttpStatus.UNAUTHORIZED,"Refresh token is invalid or expired.");var c=jwt.parse(r.refreshToken());UserAccount u=users.findById(((Number)c.get("uid")).longValue()).orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"Account not found."));if(u.getStatus()!=AccountStatus.ACTIVE)throw new ApiException(HttpStatus.FORBIDDEN,"Account is not active.");return tokens(u);}
  public UserResponse user(UserAccount u){return new UserResponse(u.getId(),u.getName(),u.getPhone(),u.getEmail(),u.getRole().name());}
  private LoginResponse tokens(UserAccount u){return new LoginResponse(jwt.accessToken(u.getId(),u.getEmail()!=null?u.getEmail():u.getUsername(),u.getRole().name()),jwt.refreshToken(u.getId(),u.getEmail()!=null?u.getEmail():u.getUsername(),u.getRole().name()),user(u));}

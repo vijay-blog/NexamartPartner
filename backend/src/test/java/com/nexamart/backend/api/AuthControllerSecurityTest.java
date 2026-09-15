@@ -1,6 +1,6 @@
 package com.nexamart.backend.api;
 
-import com.nexamart.backend.api.ApiModels.LoginResponse;
+import com.nexamart.backend.api.ApiModels.RegistrationResponse;
 import com.nexamart.backend.api.ApiModels.RegisterRequest;
 import com.nexamart.backend.api.ApiModels.UserResponse;
 import com.nexamart.backend.config.CorsConfig;
@@ -52,16 +52,11 @@ class AuthControllerSecurityTest {
 
   @Test
   void registerWithoutAuthorizationReturnsLoginResponse() throws Exception {
-    when(authService.register(any(RegisterRequest.class))).thenReturn(new LoginResponse(
-      "access-token", "refresh-token",
-      new UserResponse(1L, "New Partner", "9876543210", "new@example.com", "DELIVERY_PARTNER")
-    ));
+    when(authService.register(any(RegisterRequest.class))).thenReturn(new RegistrationResponse("Delivery partner account created successfully."));
 
     mvc.perform(post("/api/v1/auth/register").contentType("application/json").content(REGISTER_JSON))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$.accessToken").value("access-token"))
-      .andExpect(jsonPath("$.refreshToken").value("refresh-token"))
-      .andExpect(jsonPath("$.user.role").value("DELIVERY_PARTNER"));
+      .andExpect(jsonPath("$.message").value("Delivery partner account created successfully."));
   }
 
   @Test
@@ -105,10 +100,7 @@ class AuthControllerSecurityTest {
 
   @Test
   void csrfTokenIsNotRequiredForPublicRegistration() throws Exception {
-    when(authService.register(any(RegisterRequest.class))).thenReturn(new LoginResponse(
-      "access-token", "refresh-token",
-      new UserResponse(1L, "New Partner", "9876543210", "new@example.com", "DELIVERY_PARTNER")
-    ));
+    when(authService.register(any(RegisterRequest.class))).thenReturn(new RegistrationResponse("Delivery partner account created successfully."));
 
     mvc.perform(post("/api/v1/auth/register").contentType("application/json").content(REGISTER_JSON))
       .andExpect(status().isOk());
